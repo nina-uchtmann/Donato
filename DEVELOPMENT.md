@@ -158,32 +158,32 @@ Simulators don't have a real camera, so use **Upload** with a saved photo to tes
 
 ## Setting Up Google Vision
 
-Donato uses the [Cloud Vision API](https://cloud.google.com/vision) to identify items. Each photo uses 2 units (label detection and object detection). Each feature has 1,000 free units per month, so about 1,000 photos a month are free ([pricing](https://cloud.google.com/vision/pricing)).
+Donato uses the [Cloud Vision API](https://cloud.google.com/vision) to identify items. The team shares one Google Cloud project, which already has billing and the Vision API turned on. **Don't create your own project.**
 
-> **On the team?** Ask Nina to add you to the existing Google Cloud project instead of creating a new one. Then skip to step 4.
-
-1. **Create a project.** Go to the [Google Cloud console](https://console.cloud.google.com/), open the project picker, and choose **New project**.
-2. **Turn on billing.** Vision requires a billing account even within the free tier. Go to **Billing** and link one.
-3. **Enable the API.** Open [Cloud Vision API](https://console.cloud.google.com/apis/library/vision.googleapis.com) and click **Enable**.
-4. **Create an API key.** Go to **APIs & Services → Credentials → Create credentials → API key**. Under **API restrictions**, choose **Restrict key** and select only **Cloud Vision API**.
-5. **Add the key to `.env`** (never `.env.example`):
+1. **Ask Nina to add you to the Donato project.** Send Nina the Google account email you want to use, and Nina will give you access to create API keys.
+2. **Open the project.** Go to the [Google Cloud console](https://console.cloud.google.com/), sign in with that Google account, and pick **Donato** from the project picker at the top. If you don't see it, check that you're signed in to the right account, or ask Nina to confirm you were added.
+3. **Create your own API key.** Go to **APIs & Services → Credentials → Create credentials → API key**. Under **API restrictions**, choose **Restrict key** and select only **Cloud Vision API**. Name the key after yourself (e.g., `donato-priyanka`) so the team can tell keys apart.
+4. **Add the key to `.env`** (never `.env.example`):
+   ```bash
+   cp .env.example .env
+   ```
+   Then open `.env` and paste your key after the `=`:
    ```
    EXPO_PUBLIC_GOOGLE_VISION_API_KEY=AIza...
    ```
-6. **Test the key from the terminal.**
+5. **Test the key from the terminal.**
    ```bash
    npm run test:vision                        # uses the app icon
    npm run test:vision ~/Desktop/shirt.jpg    # or any photo
    ```
    You should see `✓ Your key works!` and a list of labels.
-7. **Restart Expo** so it picks up the key: `npx expo start --clear`.
+6. **Restart Expo** so it picks up the key: `npx expo start --clear`.
 
 | Error | Fix |
 | --- | --- |
 | `API key not valid` | Check for typos in `.env`, then restart with `--clear` |
-| `billing to be enabled` | Link a billing account to the project (step 2) |
-| `has not been used in project … or it is disabled` | Enable the Cloud Vision API (step 3), then wait a minute |
-| `Requests to this API … are blocked` | Add Cloud Vision API to the key's API restrictions (step 4) |
+| `Requests to this API … are blocked` | Add Cloud Vision API to the key's API restrictions (step 3) |
+| `billing to be enabled` or `has not been used in project … or it is disabled` | Your key may be from a different project. Make sure **Donato** is selected in step 2. If it is, tell Nina. |
 
 > Don't use **Application restrictions** (iOS apps / Android apps) during development. Expo Go runs your code inside Expo's own app, so Google would reject the requests.
 
@@ -192,10 +192,7 @@ Donato uses the [Cloud Vision API](https://cloud.google.com/vision) to identify 
 - **Never commit a real key.** `.env` is gitignored. `.env.example` is committed, so its value must stay blank.
 - **Never paste a key in group chats or issues.** If you have to share one, send it privately (a direct message or a password manager).
 - **`EXPO_PUBLIC_` variables are bundled into the app**, so anyone with the app can extract them. That's acceptable for a hackathon demo. Before a public release, move Vision calls behind a small backend (such as a Cloud Function).
-- **Limit the damage if a key leaks:**
-  - **Billing → Budgets & alerts:** set a $5 budget with email alerts.
-  - **APIs & Services → Cloud Vision API → Quotas:** lower the requests-per-day limit (for example, 500).
-- **If a key is exposed**, delete it in **Credentials** and create a new one.
+- **If your key is exposed**, delete it in **Credentials**, create a new one, and let Nina know.
 
 ## Testing With Your Team
 
@@ -208,8 +205,7 @@ Expo builds the key into the app on the host's laptop and sends it to each phone
 This only works while the host's laptop is running the dev server.
 
 **Option 2: everyone runs it locally (for developers)**
-1. The Google Cloud project owner goes to **IAM & Admin → IAM → Grant access**, adds each teammate's Google email, and gives them the **API Keys Admin** role.
-2. Each teammate creates their **own** restricted key (step 4 above), puts it in their own `.env`, and runs `npm run test:vision`.
+Each teammate follows [Setting Up Google Vision](#setting-up-google-vision): ask Nina for access, create your **own** key in the Donato project, put it in your own `.env`, and run `npm run test:vision`.
 
 Separate keys let you turn off one person's key without breaking everyone else's.
 
