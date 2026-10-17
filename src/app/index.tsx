@@ -1,6 +1,6 @@
 import * as ImagePicker from 'expo-image-picker';
-import { router } from 'expo-router';
-import { useState } from 'react';
+import { router, useFocusEffect } from 'expo-router';
+import { useCallback, useState } from 'react';
 import {
   ActivityIndicator,
   Alert,
@@ -28,6 +28,16 @@ export default function CaptureScreen() {
   const [category, setCategory] = useState<Category | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  useFocusEffect(
+    useCallback(() => {
+      setPhotoUri(null);
+      setLabels([]);
+      setCategory(null);
+      setLoading(false);
+      setError(null);
+    }, [])
+  );
 
   async function pickPhoto(source: 'camera' | 'library') {
     const permission =
@@ -80,7 +90,9 @@ export default function CaptureScreen() {
         {photoUri ? (
           <Image source={{ uri: photoUri }} style={styles.photo} />
         ) : (
-          <Text style={styles.photoPlaceholder}>📷{'\n'}No photo yet</Text>
+          <Text style={styles.photoPlaceholder}>
+            📷{'\n'}Add a photo to start{'\n'}Take a photo or upload one
+          </Text>
         )}
         {loading && (
           <View style={styles.loadingOverlay}>

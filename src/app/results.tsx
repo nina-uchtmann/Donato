@@ -10,7 +10,7 @@ import {
   Text,
   View,
 } from 'react-native';
-import MapView, { Marker } from 'react-native-maps';
+import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
 
 import { CATEGORIES, colors, isCategory, type Category } from '@/constants/categories';
 import centersData from '@/data/centers.json';
@@ -62,6 +62,7 @@ export default function ResultsScreen() {
     <View style={styles.flex}>
       <MapView
         style={styles.map}
+        provider={Platform.OS === 'android' ? PROVIDER_GOOGLE : undefined}
         showsUserLocation={!isFallback}
         initialRegion={{ ...coords, latitudeDelta: 0.12, longitudeDelta: 0.12 }}
       >
@@ -132,7 +133,7 @@ function openDirections({ latitude, longitude }: Coords) {
 const styles = StyleSheet.create({
   flex: { flex: 1 },
   centered: { flex: 1, alignItems: 'center', justifyContent: 'center', gap: 12 },
-  map: { height: 240 },
+  map: { width: '100%', height: 240 },
   list: { padding: 16, gap: 12 },
   header: { gap: 8, marginBottom: 4 },
   headerTitle: { fontSize: 18, fontWeight: '700', color: colors.text },
