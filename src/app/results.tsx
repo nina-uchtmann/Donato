@@ -15,6 +15,7 @@ import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
 import { CATEGORIES, colors, isCategory, type Category } from '@/constants/categories';
 import centersData from '@/data/centers.json';
 import { distanceMiles, getUserCoords, type Coords } from '@/lib/location';
+import Slider from '@react-native-community/slider';
 
 type Center = {
   id: string;
@@ -30,7 +31,7 @@ const centers = centersData as Center[];
 export default function ResultsScreen() {
   const params = useLocalSearchParams<{ category: string }>();
   const category = isCategory(params.category) ? params.category : null;
-
+  const [maxDistance, setMaxDistance] = useState(10);
   const [coords, setCoords] = useState<Coords | null>(null);
   const [isFallback, setIsFallback] = useState(false);
 
@@ -42,12 +43,14 @@ export default function ResultsScreen() {
   }, []);
 
   const results = useMemo(() => {
-    if (!coords) return [];
-    return centers
-      .filter((c) => !category || c.accepts.includes(category))
-      .map((c) => ({ ...c, distance: distanceMiles(coords, c) }))
-      .sort((a, b) => a.distance - b.distance);
-  }, [coords, category]);
+  if (!coords) return [];
+
+  return centers
+    .filter((c) => !category || c.accepts.includes(category))
+    .map((c) => ({ ...c, distance: distanceMiles(coords, c) }))
+    .filter((c) => c.distance <= maxDistance)
+    .sort((a, b) => a.distance - b.distance);
+}, [coords, category, maxDistance]);
 
   if (!coords) {
     return (
@@ -96,6 +99,27 @@ export default function ResultsScreen() {
             <Text style={styles.notice}>
               Sample data for testing. Check each location's website before dropping off.
             </Text>
+            <View style={styles.sliderContainer}>
+              <Text style={styles.sliderTitle}>
+                Search within {maxDistance} miles
+              </Text>
+
+              <Slider
+                style={styles.slider}
+                minimumValue={1}
+                maximumValue={25}
+                step={1}
+                value={maxDistance}
+                onValueChange={setMaxDistance}
+                minimumTrackTintColor={colors.primary}
+                maximumTrackTintColor={colors.border}
+              />
+
+              <View style={styles.sliderLabels}>
+                <Text style={styles.muted}>1 mi</Text>
+                <Text style={styles.muted}>25 mi</Text>
+              </View>
+            </View>
           </View>
         }
         ListEmptyComponent={<Text style={styles.muted}>No nearby locations for this category yet.</Text>}
@@ -137,6 +161,17 @@ const styles = StyleSheet.create({
   list: { padding: 16, gap: 12 },
   header: { gap: 8, marginBottom: 4 },
   headerTitle: { fontSize: 18, fontWeight: '700', color: colors.text },
+  sliderContainer: {
+    padding: 12,
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: colors.border,
+    backgroundColor: colors.card,
+    gap: 4,
+  },
+  sliderTitle: { fontSize: 15, fontWeight: '700', color: colors.text },
+  slider: { width: '100%', height: 40 },
+  sliderLabels: { flexDirection: 'row', justifyContent: 'space-between' },
   notice: {
     backgroundColor: colors.warningBg,
     color: colors.warning,
