@@ -79,7 +79,7 @@ Donato removes those steps so that giving something away takes less effort than 
    # then edit .env:
    EXPO_PUBLIC_GOOGLE_VISION_API_KEY=your_vision_api_key
    ```
-   Without a key, the app still runs. Pick the item's category by hand instead of auto-detecting it.
+   Without a key, the app still runs. Pick the item's category by hand instead of auto-detecting it. See [Setting Up Google Vision](#setting-up-google-vision) to get a key.
    > ⚠️ `EXPO_PUBLIC_` variables are bundled into the app, so anyone with the app can extract them. That's fine for a hackathon demo, but restrict each key to its API in the Google Cloud Console. Before a public release, move Vision calls behind a small backend (e.g., a Cloud Function) so the key stays on the server.
 
 3. **Start the dev server**
@@ -102,6 +102,36 @@ npm install -g eas-cli
 eas build --platform ios       # iOS build
 eas build --platform android   # Android build
 ```
+
+## Setting Up Google Vision
+
+Donato uses the [Cloud Vision API](https://cloud.google.com/vision) to identify items. Each photo uses 2 units (label detection and object detection). Each feature has 1,000 free units per month, so about 1,000 photos a month are free ([pricing](https://cloud.google.com/vision/pricing)).
+
+1. **Create a project.** Go to the [Google Cloud console](https://console.cloud.google.com/), open the project picker, and choose **New project**.
+2. **Turn on billing.** Vision requires a billing account even within the free tier. Go to **Billing** and link one. New accounts usually get free trial credit.
+3. **Enable the API.** Open [Cloud Vision API](https://console.cloud.google.com/apis/library/vision.googleapis.com) and click **Enable**.
+4. **Create an API key.** Go to **APIs & Services → Credentials → Create credentials → API key**. Under **API restrictions**, choose **Restrict key** and select only **Cloud Vision API**.
+5. **Add the key to the app.**
+   ```bash
+   cp .env.example .env
+   # edit .env → EXPO_PUBLIC_GOOGLE_VISION_API_KEY=AIza...
+   ```
+6. **Test the key from the terminal.**
+   ```bash
+   npm run test:vision                  # uses the app icon
+   npm run test:vision ~/Desktop/shirt.jpg   # or any photo
+   ```
+   You should see `✓ Your key works!` and a list of labels.
+7. **Restart Expo** so it picks up the new env var: `npx expo start --clear`.
+
+| Error | Fix |
+| --- | --- |
+| `API key not valid` | Check for typos in `.env`, then restart with `--clear` |
+| `billing to be enabled` | Link a billing account to the project (step 2) |
+| `has not been used in project … or it is disabled` | Enable the Cloud Vision API (step 3), then wait a minute |
+| `Requests to this API … are blocked` | Add Cloud Vision API to the key's API restrictions (step 4) |
+
+> Don't use **Application restrictions** (iOS apps / Android apps) during development. Expo Go runs your code inside Expo's own app, so Google would reject the requests.
 
 ## Permissions
 
@@ -130,6 +160,8 @@ Donato/
 │   │   └── centers.json       # Donation centers and what they accept (sample data)
 │   └── constants/
 │       └── categories.ts      # Categories and colors
+├── scripts/
+│   └── test-vision.mjs        # Checks your Vision API key from the terminal
 ├── assets/                    # Icons and splash screen
 ├── .env.example               # Template for API keys
 ├── app.json                   # Expo config (name, permissions, plugins)
