@@ -1,0 +1,58 @@
+[
+  {
+    "id": "ballard-food-bank",
+    "name": "Ballard Food Bank",
+    "address": "1400 NW Leary Way, Seattle, WA",
+    "latitude": 47.6634,
+    "longitude": -122.3757,
+    "accepts": ["food"]
+  },
+  {
+    "id": "u-district-food-bank",
+    "name": "University District Food Bank",
+    "address": "5017 Roosevelt Way NE, Seattle, WA",
+    "latitude": 47.6649,
+    "longitude": -122.3177,
+    "accepts": ["food"]
+  },
+  {
+    "id": "rainier-valley-food-bank",
+    "name": "Rainier Valley Food Bank",
+    "address": "4205 Rainier Ave S, Seattle, WA",
+    "latitude": 47.5667,
+    "longitude": -122.2879,
+    "accepts": ["food"]
+  },
+  {
+    "id": "seattle-goodwill-sodo",
+    "name": "Seattle Goodwill",
+    "address": "1400 S Lane St, Seattle, WA",
+    "latitude": 47.5966,
+    "longitude": -122.3165,
+    "accepts": ["clothing", "furniture"]
+  },
+  {
+    "id": "salvation-army-sodo",
+    "name": "Salvation Army Family Store",
+    "address": "1010 4th Ave S, Seattle, WA",
+    "latitude": 47.5932,
+    "longitude": -122.329,
+    "accepts": ["clothing", "furniture"]
+  },
+  {
+    "id": "value-village-capitol-hill",
+    "name": "Value Village",
+    "address": "1525 11th Ave, Seattle, WA",
+    "latitude": 47.6145,
+    "longitude": -122.3176,
+    "accepts": ["clothing", "furniture"]
+  },
+  {
+    "id": "habitat-restore-seattle",
+    "name": "Habitat for Humanity ReStore",
+    "address": "21 S Nevada St, Seattle, WA",
+    "latitude": 47.565,
+    "longitude": -122.3355,
+    "accepts": ["furniture"]
+  }
+]

@@ -43,7 +43,7 @@ Donato removes those steps so that giving something away takes less effort than 
 | Framework | React Native with [Expo](https://expo.dev) |
 | Language | TypeScript |
 | Navigation | Expo Router |
-| Camera and photo upload | `expo-camera`, `expo-image-picker` |
+| Camera and photo upload | `expo-image-picker` |
 | Item recognition | Google Cloud Vision API (label and object detection) |
 | Location | `expo-location` |
 | Maps and places | `react-native-maps`, Google Places API |
@@ -73,20 +73,25 @@ Donato removes those steps so that giving something away takes less effort than 
    npm install
    ```
 
-2. **Add your API keys.** Create a `.env` file in the project root (it is gitignored):
+2. **Add your API key (optional).** Copy `.env.example` to `.env` (it is gitignored) and add your Vision key:
    ```bash
+   cp .env.example .env
+   # then edit .env:
    EXPO_PUBLIC_GOOGLE_VISION_API_KEY=your_vision_api_key
-   EXPO_PUBLIC_GOOGLE_PLACES_API_KEY=your_places_api_key
-   EXPO_PUBLIC_GOOGLE_MAPS_API_KEY=your_maps_api_key
    ```
+   Without a key, the app still runs. Pick the item's category by hand instead of auto-detecting it.
    > ⚠️ `EXPO_PUBLIC_` variables are bundled into the app, so anyone with the app can extract them. That's fine for a hackathon demo, but restrict each key to its API in the Google Cloud Console. Before a public release, move Vision calls behind a small backend (e.g., a Cloud Function) so the key stays on the server.
 
 3. **Start the dev server**
    ```bash
    npx expo start
    ```
-   - Scan the QR code with **Expo Go** (Android) or the **Camera app** (iOS) to run on your phone.
+   - Install **Expo Go** from the App Store or Google Play.
+   - Scan the QR code with the **Camera app** (iOS) or from inside **Expo Go** (Android).
+   - Your phone and computer must be on the same Wi-Fi. On restricted networks (like hackathon or campus Wi-Fi), use `npx expo start --tunnel` instead.
    - Press `i` to open the iOS Simulator or `a` to open the Android Emulator.
+
+   After changing `.env`, restart the server with `npx expo start --clear`.
 
 4. **Grant permissions** for camera, photos, and location when prompted.
 
@@ -112,19 +117,22 @@ Permission strings are configured in `app.json` through the Expo config plugins.
 
 ```
 Donato/
-├── app/                   # Screens and routes (Expo Router)
-│   ├── index.tsx          # Home / capture screen
-│   ├── results.tsx        # Nearby donation centers (map + list)
-│   └── center/[id].tsx    # Donation center details
-├── components/            # Reusable UI components
-├── services/
-│   ├── vision.ts          # Google Cloud Vision API client
-│   ├── classify.ts        # Maps Vision labels to donation categories
-│   ├── location.ts        # Device location helpers
-│   └── places.ts          # Nearby donation-center search
-├── constants/             # Categories, colors, config
-├── assets/                # Icons, splash screen, images
-├── app.json               # Expo config (name, permissions, plugins)
+├── src/
+│   ├── app/                   # Screens and routes (Expo Router)
+│   │   ├── _layout.tsx        # Navigation stack and header styling
+│   │   ├── index.tsx          # Capture screen: photo, detection, category
+│   │   └── results.tsx        # Nearby donation centers (map + list)
+│   ├── lib/
+│   │   ├── vision.ts          # Google Cloud Vision API client
+│   │   ├── classify.ts        # Maps Vision labels to donation categories
+│   │   └── location.ts        # Device location + distance helpers
+│   ├── data/
+│   │   └── centers.json       # Donation centers and what they accept (sample data)
+│   └── constants/
+│       └── categories.ts      # Categories and colors
+├── assets/                    # Icons and splash screen
+├── .env.example               # Template for API keys
+├── app.json                   # Expo config (name, permissions, plugins)
 └── package.json
 ```
 
