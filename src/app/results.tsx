@@ -10,7 +10,7 @@ import {
   Text,
   View,
 } from 'react-native';
-import MapView, { Marker } from 'react-native-maps';
+import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
 
 import { CATEGORIES, colors, isCategory, type Category } from '@/constants/categories';
 import centersData from '@/data/centers.json';
@@ -24,6 +24,10 @@ type Center = {
   latitude: number;
   longitude: number;
   accepts: Category[];
+  /** Anything to know before going, e.g. "By appointment only". */
+  note?: string;
+  /** The place's donation page. */
+  website?: string;
 };
 
 const centers = centersData as Center[];
@@ -105,7 +109,7 @@ export default function ResultsScreen() {
               </Text>
             )}
             <Text style={styles.notice}>
-              Sample data for testing. Check each location's website before dropping off.
+              Hours and rules change. Tap Donation info or call ahead before you go.
             </Text>
             <View style={styles.sliderContainer}>
               <Text style={styles.sliderTitle}>
@@ -141,12 +145,23 @@ export default function ResultsScreen() {
             <Text style={styles.accepts}>
               Accepts: {item.accepts.map((a) => CATEGORIES[a].emoji + ' ' + CATEGORIES[a].label).join(' · ')}
             </Text>
-            <Pressable
-              style={({ pressed }) => [styles.directions, pressed && { opacity: 0.8 }]}
-              onPress={() => openDirections(item)}
-            >
-              <Text style={styles.directionsText}>Directions</Text>
-            </Pressable>
+            {item.note && <Text style={styles.note}>{item.note}</Text>}
+            <View style={styles.actions}>
+              <Pressable
+                style={({ pressed }) => [styles.directions, pressed && { opacity: 0.8 }]}
+                onPress={() => openDirections(item)}
+              >
+                <Text style={styles.directionsText}>Directions</Text>
+              </Pressable>
+              {item.website && (
+                <Pressable
+                  style={({ pressed }) => [styles.directions, pressed && { opacity: 0.8 }]}
+                  onPress={() => item.website && Linking.openURL(item.website)}
+                >
+                  <Text style={styles.directionsText}>Donation info</Text>
+                </Pressable>
+              )}
+            </View>
           </View>
         )}
       />
@@ -213,9 +228,9 @@ const styles = StyleSheet.create({
   cardName: { fontSize: 16, fontWeight: '700', color: colors.text, flex: 1 },
   distance: { fontSize: 15, fontWeight: '700', color: colors.primary },
   accepts: { fontSize: 13, color: colors.text },
+  note: { fontSize: 13, color: colors.muted, fontStyle: 'italic' },
+  actions: { flexDirection: 'row', gap: 8, marginTop: 6 },
   directions: {
-    marginTop: 6,
-    alignSelf: 'flex-start',
     backgroundColor: colors.primaryLight,
     paddingVertical: 8,
     paddingHorizontal: 14,

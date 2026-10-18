@@ -21,7 +21,7 @@ Donato removes those steps so that giving something away takes less effort than 
 ## How It Works
 
 1. 📸 **Snap.** Take a photo of your item, or upload one from your photo library.
-2. 🧠 **Identify.** Donato recognizes the item with Google Vision and sorts it into a category: clothing, furniture and household goods, or food. If it guesses wrong, tap the right category.
+2. 🧠 **Identify.** Donato recognizes the item with Google Vision and sorts it into one of nine categories, from clothing and furniture to electronics, books, and food. If it guesses wrong, tap the right category.
 3. 📍 **Locate.** Donato uses your location to find nearby places that accept *that kind of item*, not just the closest donation center.
 4. 🧭 **Go.** See results on a map and in a list sorted by distance, then tap **Directions** to open Apple Maps or Google Maps.
 
@@ -29,8 +29,14 @@ Donato removes those steps so that giving something away takes less effort than 
 
 | Category | Examples | Where it goes |
 | --- | --- | --- |
-| 👕 Clothing & shoes | Jackets, jeans, sneakers, bags | Thrift stores, donation centers |
-| 🛋️ Furniture & household | Chairs, tables, lamps, kitchenware | Thrift stores, Habitat for Humanity ReStore |
+| 👕 Clothing & shoes | Jackets, jeans, sneakers, bags | Goodwill, St. Vincent de Paul, Treehouse, WestSide Baby |
+| 🛋️ Furniture | Chairs, sofas, tables, dressers | Goodwill (Ballard, Shoreline), Habitat for Humanity stores |
+| 🍳 Kitchen & household | Mugs, pans, lamps, blankets, small appliances | Goodwill, St. Vincent de Paul, Assistance League |
+| 📱 Electronics | Phones, laptops, headphones, TVs | PCs for People, Goodwill |
+| 📚 Books & media | Books, DVDs | Friends of the Seattle Public Library, Books to Prisoners |
+| 🧸 Toys & games | Stuffed animals, LEGO, puzzles, board games | WestSide Baby, KidVantage, Goodwill |
+| ⚽ Sports & outdoors | Bikes, tents, skis, outdoor gear | Bike Works, The Mountaineers, Value Village |
+| 🎸 Musical instruments | Guitars, violins, keyboards | Ted Brown Music, Music4Life, Seattle JazzED |
 | 🥫 Food | Canned goods, pasta, cereal | Food banks |
 
 Donato currently covers the **Seattle area**.
@@ -56,7 +62,7 @@ Donato is a hackathon project and isn't in the App Store or Google Play yet. To 
 
 ## Good to Know
 
-Donation center listings are **sample data** while we build out the full directory. Always check a location's website or call ahead before dropping off. Hours and what they accept can change.
+Donato lists about 40 real donation spots, checked against each organization's own website in October 2026. Hours and what they accept change, so tap **Donation info** or call ahead before dropping off.
 
 ## Roadmap
 

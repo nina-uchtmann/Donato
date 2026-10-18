@@ -3,56 +3,390 @@
     "id": "ballard-food-bank",
     "name": "Ballard Food Bank",
     "address": "1400 NW Leary Way, Seattle, WA",
-    "latitude": 47.6634,
-    "longitude": -122.3757,
-    "accepts": ["food"]
+    "latitude": 47.664,
+    "longitude": -122.374,
+    "accepts": ["food"],
+    "note": "Unopened food. Warehouse door off 14th Ave NW & NW 49th St. Mon 11–3, Tue 11–6, Wed 11–1, Thu 11–6, Fri 10–12.",
+    "website": "https://ballard-food-bank.squarespace.com/donation-details"
   },
   {
-    "id": "u-district-food-bank",
+    "id": "university-district-food-bank",
     "name": "University District Food Bank",
     "address": "5017 Roosevelt Way NE, Seattle, WA",
-    "latitude": 47.6649,
-    "longitude": -122.3177,
-    "accepts": ["food"]
+    "latitude": 47.6656,
+    "longitude": -122.3176,
+    "accepts": ["food"],
+    "note": "Mon 10–3, Tue 9–7:30, Wed 9–1, Thu 9–7:30, Fri 10–4, Sat 9–1.",
+    "website": "https://www.udistrictfoodbank.org/fooddonations"
   },
   {
     "id": "rainier-valley-food-bank",
     "name": "Rainier Valley Food Bank",
-    "address": "4205 Rainier Ave S, Seattle, WA",
-    "latitude": 47.5667,
-    "longitude": -122.2879,
-    "accepts": ["food"]
+    "address": "9021 Rainier Ave S, Seattle, WA",
+    "latitude": 47.5226,
+    "longitude": -122.2705,
+    "accepts": ["food"],
+    "note": "Unopened food. Warehouse via the back gates on 50th Ave S, Tue–Fri 9–2.",
+    "website": "https://rvfb.org/donate-food-and-essentials"
   },
   {
-    "id": "seattle-goodwill-sodo",
+    "id": "west-seattle-food-bank",
+    "name": "West Seattle Food Bank",
+    "address": "3419 SW Morgan St, Seattle, WA",
+    "latitude": 47.5443,
+    "longitude": -122.3759,
+    "accepts": ["food", "clothing"],
+    "note": "Food Mon–Fri 9–3, Wed until 7. Clothing is taken here too, but they prefer the Clothesline on Delridge.",
+    "website": "https://www.westseattlefoodbank.org/donate-clothing/"
+  },
+  {
+    "id": "north-helpline-lake-city",
+    "name": "North Helpline Lake City Food Bank",
+    "address": "12736 33rd Ave NE, Seattle, WA",
+    "latitude": 47.7222,
+    "longitude": -122.292,
+    "accepts": ["food"],
+    "note": "Unopened food. Tue, Thu, Fri 10–1. Park in the yellow loading zone on 33rd Ave.",
+    "website": "https://northhelpline.org/donate-in-kind"
+  },
+  {
+    "id": "northwest-harvest-sodo",
+    "name": "Northwest Harvest SODO Community Market",
+    "address": "1915 4th Ave S, Seattle, WA",
+    "latitude": 47.5856,
+    "longitude": -122.3294,
+    "accepts": ["food"],
+    "note": "Food drop-off Mon 2–6:30, Wed and Fri 8:30–1.",
+    "website": "https://www.northwestharvest.org/get-involved/food-drives/food-drive-registration/food-drive-confirmation"
+  },
+  {
+    "id": "familyworks-wallingford-food-bank",
+    "name": "FamilyWorks Wallingford Food Bank",
+    "address": "1501 N 45th St, Seattle, WA",
+    "latitude": 47.6612,
+    "longitude": -122.3389,
+    "accepts": ["food"],
+    "note": "Loading-dock door. Tue–Wed 9–3, Thu 9–6, Fri 9–3. Call (206) 647-1770 to schedule.",
+    "website": "https://www.familyworksseattle.org/donate-food-clothing-items/"
+  },
+  {
+    "id": "white-center-food-bank",
+    "name": "White Center Food Bank",
+    "address": "10016 16th Ave SW, Seattle, WA",
+    "latitude": 47.5132,
+    "longitude": -122.3548,
+    "accepts": ["food"],
+    "note": "Unopened, unexpired food during open hours or when staff are on site on weekdays.",
+    "website": "https://www.whitecenterfoodbank.org/"
+  },
+  {
+    "id": "wsfb-clothesline",
+    "name": "West Seattle Food Bank Clothesline",
+    "address": "5444 Delridge Way SW, Seattle, WA",
+    "latitude": 47.5526,
+    "longitude": -122.3625,
+    "accepts": ["clothing"],
+    "note": "New or like-new clothing, bedding, tents, suitcases. Tue, Thu, Sat 10–1. Items left outside hours are thrown away.",
+    "website": "https://www.westseattlefoodbank.org/donate-clothing/"
+  },
+  {
+    "id": "familyworks-family-resource-center",
+    "name": "FamilyWorks Family Resource Center",
+    "address": "1005 NE 67th St, Seattle, WA",
+    "latitude": 47.6771,
+    "longitude": -122.3169,
+    "accepts": ["clothing", "toys"],
+    "note": "Kids' clothing and small toys only. Tue 11–1, Wed 2–5, Thu 2–4, Fri 11–2. Ring the doorbell.",
+    "website": "https://www.familyworksseattle.org/donate-food-clothing-items/"
+  },
+  {
+    "id": "northwest-center-bin-north-transfer",
+    "name": "Northwest Center Donation Bin",
+    "address": "1350 N 34th St, Seattle, WA",
+    "latitude": 47.6486,
+    "longitude": -122.341,
+    "accepts": ["clothing"],
+    "note": "Unattended outdoor bin at the North Transfer Station.",
+    "website": "https://www.bigbluetruck.org/acceptable-items"
+  },
+  {
+    "id": "treehouse-store",
+    "name": "Treehouse Store (foster youth)",
+    "address": "2100 24th Ave S, Seattle, WA",
+    "latitude": 47.5842,
+    "longitude": -122.3013,
+    "accepts": ["clothing", "books", "toys"],
+    "note": "Clothing and books new or like-new, toys brand-new only. Alley loading dock, Tue–Fri 9–4, Sat 9–2. Book ahead for a carload or more.",
+    "website": "https://www.treehouseforkids.org/take-action/give/donate-clothing-goods/"
+  },
+  {
+    "id": "westside-baby-white-center",
+    "name": "WestSide Baby",
+    "address": "10002 14th Ave SW, Seattle, WA",
+    "latitude": 47.5134,
+    "longitude": -122.3523,
+    "accepts": ["clothing", "toys", "books"],
+    "note": "Kids' items only, up to size 14/16 and ages 0–12. Mon–Thu 9–4. No cribs, car seats, or furniture.",
+    "website": "https://westsidebaby.org/donate-items/"
+  },
+  {
+    "id": "kidvantage-shoreline",
+    "name": "KidVantage Shoreline Hub",
+    "address": "17230 12th Ave NE, Shoreline, WA",
+    "latitude": 47.7542,
+    "longitude": -122.3156,
+    "accepts": ["clothing", "toys", "books", "sports", "household"],
+    "note": "Kids' items only: clothing, toys, books, bikes, bedding, towels. Tue 10–12, Sat 11–1. Sign up on their site.",
+    "website": "https://kidvantagenw.org/donate-goods/"
+  },
+  {
+    "id": "kidvantage-issaquah",
+    "name": "KidVantage Issaquah Hub",
+    "address": "1510 NW Maple St, Issaquah, WA",
+    "latitude": 47.5433,
+    "longitude": -122.0605,
+    "accepts": ["clothing", "toys", "books", "sports", "household"],
+    "note": "Kids' items only. Tue and Fri 9:30–11, some Saturdays. Sign up on their site.",
+    "website": "https://kidvantagenw.org/donate-goods/"
+  },
+  {
+    "id": "goodwill-sodo",
     "name": "Seattle Goodwill",
     "address": "1400 S Lane St, Seattle, WA",
-    "latitude": 47.5966,
-    "longitude": -122.3165,
-    "accepts": ["clothing", "furniture"]
+    "latitude": 47.5969,
+    "longitude": -122.3145,
+    "accepts": ["clothing", "household", "electronics", "toys"],
+    "note": "For now, only items up to carry-on suitcase size. Take furniture to Ballard or Shoreline. Daily 10–7.",
+    "website": "https://evergreengoodwill.org/donate-goods/"
   },
   {
-    "id": "salvation-army-sodo",
-    "name": "Salvation Army Family Store",
-    "address": "1010 4th Ave S, Seattle, WA",
-    "latitude": 47.5932,
-    "longitude": -122.329,
-    "accepts": ["clothing", "furniture"]
+    "id": "goodwill-ballard",
+    "name": "Ballard Goodwill",
+    "address": "6400 8th Ave NW, Seattle, WA",
+    "latitude": 47.6751,
+    "longitude": -122.3655,
+    "accepts": ["clothing", "furniture", "household", "electronics", "toys"],
+    "note": "Takes larger donations and furniture. Daily 10–7, may pause 1–4pm. No mattresses, pianos, or large fitness equipment.",
+    "website": "https://evergreengoodwill.org/donate-goods/"
   },
   {
-    "id": "value-village-capitol-hill",
-    "name": "Value Village",
-    "address": "1525 11th Ave, Seattle, WA",
-    "latitude": 47.6145,
-    "longitude": -122.3176,
-    "accepts": ["clothing", "furniture"]
+    "id": "goodwill-ballard-donation-center",
+    "name": "Ballard Goodwill Donation Center",
+    "address": "1145 NW Market St, Seattle, WA",
+    "latitude": 47.6683,
+    "longitude": -122.3726,
+    "accepts": ["clothing", "household", "electronics"],
+    "note": "Drive-up only. No furniture. TVs and monitors 19 inches or smaller.",
+    "website": "https://evergreengoodwill.org/locations/ballard-goodwill-donation-center/"
   },
   {
-    "id": "habitat-restore-seattle",
-    "name": "Habitat for Humanity ReStore",
-    "address": "21 S Nevada St, Seattle, WA",
-    "latitude": 47.565,
-    "longitude": -122.3355,
-    "accepts": ["furniture"]
+    "id": "goodwill-capitol-hill",
+    "name": "Capitol Hill Goodwill",
+    "address": "115 Belmont Ave E, Seattle, WA",
+    "latitude": 47.619,
+    "longitude": -122.3244,
+    "accepts": ["clothing", "furniture", "household", "electronics", "toys"],
+    "note": "Daily 10–7. Small site, so call (206) 812-7583 before bringing furniture.",
+    "website": "https://evergreengoodwill.org/locations/capitol-hill-goodwill/"
+  },
+  {
+    "id": "goodwill-ravenna-donation-center",
+    "name": "Ravenna Goodwill Donation Center",
+    "address": "4637 Union Bay Pl NE, Seattle, WA",
+    "latitude": 47.6633,
+    "longitude": -122.2954,
+    "accepts": ["clothing", "household", "electronics"],
+    "note": "For now, only items up to carry-on suitcase size. No furniture.",
+    "website": "https://evergreengoodwill.org/locations/ravenna-laurelhurst-goodwill-donation-center/"
+  },
+  {
+    "id": "goodwill-shoreline",
+    "name": "Shoreline Goodwill",
+    "address": "14500 15th Ave NE, Shoreline, WA",
+    "latitude": 47.7341,
+    "longitude": -122.3126,
+    "accepts": ["clothing", "furniture", "household", "electronics", "toys"],
+    "note": "Takes larger donations and furniture. Daily 10–7.",
+    "website": "https://evergreengoodwill.org/locations/shoreline-goodwill/"
+  },
+  {
+    "id": "svdp-georgetown",
+    "name": "St. Vincent de Paul Donation Warehouse",
+    "address": "5972 4th Ave S, Seattle, WA",
+    "latitude": 47.5485,
+    "longitude": -122.3292,
+    "accepts": ["clothing", "household", "electronics", "books", "toys"],
+    "note": "Drop-off only, no store. Tue–Fri 10–3. No furniture at this site.",
+    "website": "https://svdpseattle.org/thriftstore/"
+  },
+  {
+    "id": "svdp-kenmore",
+    "name": "St. Vincent de Paul Kenmore",
+    "address": "7304 NE Bothell Way, Kenmore, WA",
+    "latitude": 47.7581,
+    "longitude": -122.2433,
+    "accepts": ["clothing", "furniture", "household", "electronics", "books", "toys"],
+    "note": "Mon–Sat 11–4. Call 425-483-9497 before bringing furniture.",
+    "website": "https://svdpseattle.org/thriftstore/"
+  },
+  {
+    "id": "value-village-tukwila",
+    "name": "Value Village Tukwila",
+    "address": "16700 Southcenter Pkwy, Tukwila, WA",
+    "latitude": 47.4533,
+    "longitude": -122.2604,
+    "accepts": ["clothing", "furniture", "household", "electronics", "books", "toys", "sports"],
+    "note": "Small furniture only. Daily 9–8. Donations benefit Northwest Center.",
+    "website": "https://stores.savers.com/wa/tukwila/community-donation-center-cdc1173.html"
+  },
+  {
+    "id": "assistance-league-seattle",
+    "name": "Assistance League Thrift Shop",
+    "address": "1415 N 45th St, Seattle, WA",
+    "latitude": 47.6612,
+    "longitude": -122.3399,
+    "accepts": ["clothing", "household", "books"],
+    "note": "Adult clothing, kitchenware, decor, linens, books, DVDs. Thu–Fri 12–4, Sat 10–4. No kids' items or electronics.",
+    "website": "https://www.assistanceleague.org/chapter/seattle/thrift-store"
+  },
+  {
+    "id": "habitat-store-southcenter",
+    "name": "Habitat for Humanity Store Southcenter",
+    "address": "1185 Andover Park W, Tukwila, WA",
+    "latitude": 47.4442,
+    "longitude": -122.2552,
+    "accepts": ["furniture", "household"],
+    "note": "Daily 10–6, free pickup available. Furniture must be complete and clean. Appliances 10 years old or newer. Lamps, mirrors, and decor, but not dishes or linens.",
+    "website": "https://www.habitatskc.org/donate-goods/"
+  },
+  {
+    "id": "habitat-store-bellevue",
+    "name": "Habitat for Humanity Store Bellevue",
+    "address": "13500 Bel-Red Rd, Bellevue, WA",
+    "latitude": 47.6235,
+    "longitude": -122.1603,
+    "accepts": ["furniture", "household"],
+    "note": "Mon–Sat 10–6, free pickup available. Same rules as Southcenter.",
+    "website": "https://www.habitatskc.org/donate-goods/"
+  },
+  {
+    "id": "seattle-humane",
+    "name": "Seattle Humane",
+    "address": "13212 SE Eastgate Way, Bellevue, WA",
+    "latitude": 47.5808,
+    "longitude": -122.1654,
+    "accepts": ["household"],
+    "note": "Towels, fleece blankets, and washed pet beds only. Bins in the lower lot, open 24/7.",
+    "website": "https://www.seattlehumane.org/ways-to-give/give-supplies"
+  },
+  {
+    "id": "pcs-for-people-seattle",
+    "name": "PCs for People Seattle",
+    "address": "1121 N 35th St, Seattle, WA",
+    "latitude": 47.6493,
+    "longitude": -122.3433,
+    "accepts": ["electronics"],
+    "note": "Laptops, desktops, phones, tablets, monitors, refurbished for low-income households. Mon–Fri 9–3. Call 206-222-2060.",
+    "website": "https://www.pcsforpeople.org/locations/seattle-wa/"
+  },
+  {
+    "id": "fospl-georgetown-bookshop",
+    "name": "Friends of the Seattle Public Library Bookshop",
+    "address": "5608 6th Ave S, Seattle, WA",
+    "latitude": 47.5522,
+    "longitude": -122.3264,
+    "accepts": ["books"],
+    "note": "Books only, no DVDs, CDs, or magazines. Thursdays and the 2nd Saturday, 10–3. Up to about 15 boxes.",
+    "website": "https://www.friendsofspl.org/donate"
+  },
+  {
+    "id": "books-to-prisoners",
+    "name": "Books to Prisoners (at Left Bank Books)",
+    "address": "92 Pike St, Seattle, WA",
+    "latitude": 47.6089,
+    "longitude": -122.3404,
+    "accepts": ["books"],
+    "note": "Paperbacks preferred, 1–2 boxes. No textbooks, CDs, or marked books.",
+    "website": "https://www.bookstoprisoners.net/donate-books"
+  },
+  {
+    "id": "scarecrow-video",
+    "name": "Scarecrow Video",
+    "address": "5030 Roosevelt Way NE, Seattle, WA",
+    "latitude": 47.666,
+    "longitude": -122.3171,
+    "accepts": ["books"],
+    "note": "DVDs and other video. Recommended by the library Friends. Call 206-524-8554 first.",
+    "website": "https://www.friendsofspl.org/donate"
+  },
+  {
+    "id": "bike-works-warehouse",
+    "name": "Bike Works Warehouse",
+    "address": "3715 S Hudson St, Seattle, WA",
+    "latitude": 47.5569,
+    "longitude": -122.2852,
+    "accepts": ["sports"],
+    "note": "Bikes in any condition, parts, accessories. Back of the Hudson Building (#111), daily 11–5. No e-bikes.",
+    "website": "https://bikeworks.org/donate/used-bicycle/"
+  },
+  {
+    "id": "bike-works-north-transfer",
+    "name": "Bike Works Bike Bin (North)",
+    "address": "1350 N 34th St, Seattle, WA",
+    "latitude": 47.6488,
+    "longitude": -122.3414,
+    "accepts": ["sports"],
+    "note": "Green bin at the North Transfer Station reuse center. Up to 10 bikes, no e-bikes.",
+    "website": "https://bikeworks.org/donate/used-bicycle/"
+  },
+  {
+    "id": "bike-works-south-transfer",
+    "name": "Bike Works Bike Bin (South)",
+    "address": "130 S Kenyon St, Seattle, WA",
+    "latitude": 47.5331,
+    "longitude": -122.3328,
+    "accepts": ["sports"],
+    "note": "Bike bin at the South Transfer Station. No e-bikes.",
+    "website": "https://bikeworks.org/donate/used-bicycle/"
+  },
+  {
+    "id": "mountaineers-gear-library",
+    "name": "The Mountaineers Gear Library",
+    "address": "7700 Sand Point Way NE, Seattle, WA",
+    "latitude": 47.6853,
+    "longitude": -122.264,
+    "accepts": ["sports"],
+    "note": "Outdoor gear from 2020 or newer: tents, snowshoes, skis, jackets. No climbing gear. Contact them first.",
+    "website": "https://www.mountaineers.org/membership/gear-library"
+  },
+  {
+    "id": "ted-brown-music",
+    "name": "Ted Brown Music (TBM Outreach)",
+    "address": "1006 NE 50th St, Seattle, WA",
+    "latitude": 47.665,
+    "longitude": -122.3172,
+    "accepts": ["instruments"],
+    "note": "Playable or repairable band, string, and percussion instruments, guitars, keyboards. During store hours.",
+    "website": "https://www.tbmoutreach.org/donate-instruments-seattle.html"
+  },
+  {
+    "id": "music4life-american-music",
+    "name": "Music4Life at American Music",
+    "address": "4450 Fremont Ave N, Seattle, WA",
+    "latitude": 47.6609,
+    "longitude": -122.3495,
+    "accepts": ["instruments"],
+    "note": "Print Music4Life's donor form and put it in the instrument case.",
+    "website": "https://www.music4life.org/get-involved"
+  },
+  {
+    "id": "seattle-jazzed",
+    "name": "Seattle JazzED",
+    "address": "380 Boren Ave N, Seattle, WA",
+    "latitude": 47.6217,
+    "longitude": -122.3356,
+    "accepts": ["instruments"],
+    "note": "By appointment. Fill in their online form first.",
+    "website": "https://www.seattlejazzed.org/donate-instrument"
   }
 ]

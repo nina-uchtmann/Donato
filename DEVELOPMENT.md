@@ -241,7 +241,7 @@ Import from `src/` using the `@/` alias, for example `import { classify } from '
 
 1. **Capture** (`src/app/index.tsx`): `expo-image-picker` opens the camera or photo library and returns a base64 JPEG at 50% quality to keep uploads small.
 2. **Detect** (`src/lib/vision.ts`): the image goes to Cloud Vision with `LABEL_DETECTION` and `OBJECT_LOCALIZATION`. Labels from both are merged and sorted by confidence. Requests time out after 15 seconds. In development, detected labels are logged to the Expo terminal as `[vision] detected: …`.
-3. **Classify** (`src/lib/classify.ts`): each label is matched against keyword lists for each category, weighted by confidence. The highest-scoring category wins. The user can always override it.
+3. **Classify** (`src/lib/classify.ts`): each label is matched against keyword lists for each category, weighted by confidence. Plurals are ignored, and when a label matches several categories the longest phrase wins, so "Table tennis" counts as sports, not furniture. Repeated labels count once, and clothing counts half when a person is in the photo, so worn clothes don't outvote the item. The highest-scoring category wins. The user can always override it.
 4. **Locate** (`src/lib/location.ts`): `expo-location` gets the phone's position. If permission is denied, it falls back to the University of Washington.
 5. **Rank** (`src/app/results.tsx`): centers are filtered by category, sorted by straight-line distance (haversine formula), and shown on a map and in a list.
 
@@ -256,17 +256,19 @@ Add an entry to `src/data/centers.json`:
   "address": "123 Main St, Seattle, WA",
   "latitude": 47.6062,
   "longitude": -122.3321,
-  "accepts": ["food"]
+  "accepts": ["food"],
+  "note": "Unopened food. Mon–Fri 9–3.",
+  "website": "https://example.org/donate"
 }
 ```
-`accepts` can include `"clothing"`, `"furniture"`, and `"food"`. To get coordinates, right-click the location in Google Maps.
+`accepts` can include any category key from `src/constants/categories.ts`: `"clothing"`, `"furniture"`, `"household"`, `"electronics"`, `"books"`, `"toys"`, `"sports"`, `"instruments"`, and `"food"`. To get coordinates, right-click the location in Google Maps. `note` and `website` are optional. They show on the result card, and `website` adds a **Donation info** button. Only list a category when the organization's own donation page says they take it.
 
 **Data sources for the full directory:**
 - [King County "What Do I Do With…?"](https://kingcounty.gov/tools/what-do-i-do-with) ([dataset](https://catalog-beta.data.gov/dataset/what-do-i-do-with-recycling-options-in-king-county)): maps materials to the places that accept them
 - [Emergency Food and Meals, Seattle and King County](https://cos-data.seattle.gov/d/kkzf-ntnu): food banks with coordinates (CSV/JSON)
 
 ### Improve item detection
-If Vision returns a label that doesn't match any category, check the `[vision] detected:` log and add the word to the right list in `KEYWORDS` in `src/lib/classify.ts`.
+If Vision returns a label that doesn't match any category, check the `[vision] detected:` log and add the word to the right list in `KEYWORDS` in `src/lib/classify.ts`. Use the label as Vision writes it, such as `"audio equipment"`. Multi-word phrases beat single words, so a specific phrase can fix a wrong match without removing a word.
 
 ### Add a new category
 1. Add it to the `Category` type and `CATEGORIES` in `src/constants/categories.ts`.
