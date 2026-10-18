@@ -64,9 +64,17 @@ const MAY_ACCEPT: Partial<Record<Category, (c: Center) => boolean>> = {
 const MIN_CONFIRMED = 3;
 const MAX_MAYBE = 10;
 
+/** Pin color for places that take only part of a mixed pile. */
+const PARTIAL_PIN = '#E0A100';
+
 export default function ResultsScreen() {
-  const params = useLocalSearchParams<{ category: string }>();
-  const category = isCategory(params.category) ? params.category : null;
+  // `categories` is a comma-separated list; `category` is the older single-category param.
+  const params = useLocalSearchParams<{ categories?: string; category?: string }>();
+  const selected = useMemo(
+    () => [...new Set((params.categories ?? params.category ?? '').split(',').filter(isCategory))],
+    [params.categories, params.category],
+  );
+  const multi = selected.length > 1;
   const [maxDistance, setMaxDistance] = useState(10);
   /** Where distances are measured from. Starts at the phone's location. */
   const [coords, setCoords] = useState<Coords | null>(null);
@@ -130,25 +138,37 @@ export default function ResultsScreen() {
   const results = useMemo(() => {
     if (!coords) return [];
 
+    // Places that take more of the selected categories come first, then the nearest.
     return centers
-      .filter((c) => !category || c.accepts.includes(category))
-      .map((c) => ({ ...c, distance: distanceMiles(coords, c) }))
-      .filter((c) => c.distance <= maxDistance)
-      .sort((a, b) => a.distance - b.distance);
-  }, [coords, category, maxDistance]);
+      .map((c) => ({
+        ...c,
+        distance: distanceMiles(coords, c),
+        covers: selected.filter((s) => c.accepts.includes(s)),
+      }))
+      .filter((c) => c.distance <= maxDistance && (!selected.length || c.covers.length > 0))
+      .sort((a, b) => b.covers.length - a.covers.length || a.distance - b.distance);
+  }, [coords, selected, maxDistance]);
 
-  /** General thrift stores that might take the item; see MAY_ACCEPT. */
+  const takesEverything = results.filter((c) => c.covers.length === selected.length).length;
+
+  /** A selected category with too few confirmed places nearby; see MAY_ACCEPT. */
+  const sparse = selected.find(
+    (s) => MAY_ACCEPT[s] && results.filter((c) => c.accepts.includes(s)).length < MIN_CONFIRMED,
+  );
+
+  /** General thrift stores that might take the sparse category. */
   const maybe = useMemo(() => {
-    const mightAccept = category && MAY_ACCEPT[category];
-    if (!coords || !mightAccept || results.length >= MIN_CONFIRMED) return [];
+    const mightAccept = sparse && MAY_ACCEPT[sparse];
+    if (!coords || !sparse || !mightAccept) return [];
+    const shown = new Set(results.map((c) => c.id));
 
     return centers
-      .filter((c) => mightAccept(c) && !c.accepts.includes(category))
-      .map((c) => ({ ...c, distance: distanceMiles(coords, c), maybe: true }))
+      .filter((c) => mightAccept(c) && !c.accepts.includes(sparse) && !shown.has(c.id))
+      .map((c) => ({ ...c, distance: distanceMiles(coords, c), covers: [] as Category[], maybe: true }))
       .filter((c) => c.distance <= maxDistance)
       .sort((a, b) => a.distance - b.distance)
       .slice(0, MAX_MAYBE);
-  }, [coords, category, maxDistance, results.length]);
+  }, [coords, sparse, maxDistance, results]);
 
   if (!coords) {
     return (
@@ -194,8 +214,20 @@ export default function ResultsScreen() {
               key={c.id}
               coordinate={{ latitude: c.latitude, longitude: c.longitude }}
               title={c.name}
-              description={'maybe' in c ? 'Might accept. Call first.' : c.address}
-              pinColor={'maybe' in c ? colors.muted : colors.primary}
+              description={
+                'maybe' in c
+                  ? 'Might accept. Call first.'
+                  : multi
+                    ? `Takes ${c.covers.length} of ${selected.length}`
+                    : c.address
+              }
+              pinColor={
+                'maybe' in c
+                  ? colors.muted
+                  : c.covers.length < selected.length
+                    ? PARTIAL_PIN
+                    : colors.primary
+              }
             />
           ))}
           <Marker
@@ -254,9 +286,17 @@ export default function ResultsScreen() {
         ListHeaderComponent={
           <View style={styles.header}>
             <Text style={styles.headerTitle}>
-              {category ? `${CATEGORIES[category].emoji} ` : ''}
+              {selected.map((s) => CATEGORIES[s].emoji).join(' ')}
+              {selected.length ? ' ' : ''}
               {results.length} {results.length === 1 ? 'place' : 'places'} within {maxDistance} mi
             </Text>
+            {multi && results.length > 0 && (
+              <Text style={styles.muted}>
+                {takesEverything
+                  ? `${takesEverything} take${takesEverything === 1 ? 's' : ''} everything. Shown first.`
+                  : 'No single place takes everything. Places that take the most are first.'}
+              </Text>
+            )}
             {isFallback && !movedTo && (
               <Text style={styles.notice}>Using UW as your location. Search above to change it.</Text>
             )}
@@ -286,6 +326,21 @@ export default function ResultsScreen() {
                 </Text>
                 <Text style={styles.distance}>{item.distance.toFixed(1)} mi</Text>
               </View>
+              {multi && !('maybe' in item) && (
+                <Text
+                  style={[
+                    styles.coverage,
+                    item.covers.length === selected.length ? styles.coverageFull : styles.coveragePartial,
+                  ]}
+                >
+                  {item.covers.length === selected.length
+                    ? '✓ Takes everything'
+                    : `Takes ${item.covers.length} of ${selected.length} · not ${selected
+                        .filter((s) => !item.covers.includes(s))
+                        .map((s) => CATEGORIES[s].emoji)
+                        .join(' ')}`}
+                </Text>
+              )}
               <View style={styles.cardMeta}>
                 <Text style={[styles.muted, styles.flex]} numberOfLines={1}>
                   {item.address ?? 'No address listed'}
@@ -329,7 +384,9 @@ export default function ResultsScreen() {
           if (!('maybe' in item) || index !== results.length) return card;
           return (
             <View style={styles.maybeSection}>
-              <Text style={styles.maybeTitle}>Might take {category && CATEGORIES[category].label.toLowerCase()}</Text>
+              <Text style={styles.maybeTitle}>
+                Might take {sparse && CATEGORIES[sparse].label.toLowerCase()}
+              </Text>
               <Text style={styles.muted}>
                 General thrift stores nearby. They don't list this item, so call before you go.
               </Text>
@@ -457,6 +514,17 @@ const styles = StyleSheet.create({
   cardName: { fontSize: 16, fontWeight: '700', color: colors.text, flex: 1 },
   distance: { fontSize: 15, fontWeight: '700', color: colors.primary },
   cardMeta: { flexDirection: 'row', alignItems: 'center', gap: 8 },
+  coverage: {
+    alignSelf: 'flex-start',
+    fontSize: 12,
+    fontWeight: '700',
+    paddingHorizontal: 8,
+    paddingVertical: 3,
+    borderRadius: 6,
+    overflow: 'hidden',
+  },
+  coverageFull: { backgroundColor: colors.primaryLight, color: colors.primary },
+  coveragePartial: { backgroundColor: colors.warningBg, color: colors.warning },
   acceptIcons: { fontSize: 14 },
   details: {
     gap: 4,

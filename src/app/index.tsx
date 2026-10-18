@@ -13,7 +13,7 @@ import {
 } from 'react-native';
 
 import { CATEGORIES, CATEGORY_KEYS, colors, type Category } from '@/constants/categories';
-import { classify } from '@/lib/classify';
+import { classifyAll } from '@/lib/classify';
 import { detectLabels, hasVisionKey, type VisionLabel } from '@/lib/vision';
 
 const PICKER_OPTIONS: ImagePicker.ImagePickerOptions = {
@@ -25,7 +25,9 @@ const PICKER_OPTIONS: ImagePicker.ImagePickerOptions = {
 export default function CaptureScreen() {
   const [photoUri, setPhotoUri] = useState<string | null>(null);
   const [labels, setLabels] = useState<VisionLabel[]>([]);
-  const [category, setCategory] = useState<Category | null>(null);
+  /** Selected categories; a photo of a donation pile can have several. */
+  const [selected, setSelected] = useState<Category[]>([]);
+  const [detected, setDetected] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -33,7 +35,8 @@ export default function CaptureScreen() {
     useCallback(() => {
       setPhotoUri(null);
       setLabels([]);
-      setCategory(null);
+      setSelected([]);
+      setDetected(false);
       setLoading(false);
       setError(null);
     }, [])
@@ -58,20 +61,28 @@ export default function CaptureScreen() {
     const asset = result.assets[0];
     setPhotoUri(asset.uri);
     setLabels([]);
-    setCategory(null);
+    setSelected([]);
+    setDetected(false);
     setError(null);
 
     if (hasVisionKey && asset.base64) await identify(asset.base64);
   }
 
+  function toggle(key: Category) {
+    setSelected((current) =>
+      current.includes(key) ? current.filter((c) => c !== key) : [...current, key],
+    );
+  }
+
   async function identify(base64: string) {
     setLoading(true);
     try {
-      const detected = await detectLabels(base64);
-      setLabels(detected);
-      const match = classify(detected);
-      setCategory(match);
-      if (!match) setError("Couldn't tell what this is. Pick a category below.");
+      const visionLabels = await detectLabels(base64);
+      setLabels(visionLabels);
+      const matches = classifyAll(visionLabels);
+      setSelected(matches);
+      setDetected(matches.length > 0);
+      if (!matches.length) setError("Couldn't tell what this is. Pick categories below.");
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Something went wrong identifying the item.');
     } finally {
@@ -110,7 +121,7 @@ export default function CaptureScreen() {
       {!hasVisionKey && (
         <Text style={styles.notice}>
           Auto-detect is off. Add EXPO_PUBLIC_GOOGLE_VISION_API_KEY to .env to identify items with
-          Google Vision. For now, pick a category below.
+          Google Vision. For now, pick categories below.
         </Text>
       )}
       {error && <Text style={styles.notice}>{error}</Text>}
@@ -121,19 +132,25 @@ export default function CaptureScreen() {
         </Text>
       )}
 
-      <Text style={styles.sectionTitle}>
-        {category ? 'Looks like:' : 'What are you donating?'}
-      </Text>
+      <View>
+        <Text style={styles.sectionTitle}>
+          {detected ? 'Looks like:' : 'What are you donating?'}
+        </Text>
+        <Text style={styles.hint}>Tap to add or remove. Pick several for a mixed pile.</Text>
+      </View>
       <View style={styles.chips}>
         {CATEGORY_KEYS.map((key) => {
-          const selected = key === category;
+          const isSelected = selected.includes(key);
           return (
             <Pressable
               key={key}
-              onPress={() => setCategory(key)}
-              style={[styles.chip, selected && styles.chipSelected]}
+              onPress={() => toggle(key)}
+              style={[styles.chip, isSelected && styles.chipSelected]}
+              accessibilityRole="checkbox"
+              accessibilityState={{ checked: isSelected }}
             >
-              <Text style={[styles.chipText, selected && styles.chipTextSelected]}>
+              <Text style={[styles.chipText, isSelected && styles.chipTextSelected]}>
+                {isSelected ? '✓ ' : ''}
                 {CATEGORIES[key].emoji} {CATEGORIES[key].label}
               </Text>
             </Pressable>
@@ -142,9 +159,11 @@ export default function CaptureScreen() {
       </View>
 
       <Button
-        label="Find donation spots"
-        disabled={!category || loading}
-        onPress={() => category && router.push({ pathname: '/results', params: { category } })}
+        label={selected.length > 1 ? `Find spots for ${selected.length} kinds of items` : 'Find donation spots'}
+        disabled={!selected.length || loading}
+        onPress={() =>
+          router.push({ pathname: '/results', params: { categories: selected.join(',') } })
+        }
       />
     </ScrollView>
   );
@@ -210,6 +229,7 @@ const styles = StyleSheet.create({
   },
   labels: { fontSize: 13, color: colors.muted },
   sectionTitle: { fontSize: 17, fontWeight: '700', color: colors.text },
+  hint: { fontSize: 13, color: colors.muted, marginTop: 2 },
   chips: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
   chip: {
     paddingVertical: 10,
