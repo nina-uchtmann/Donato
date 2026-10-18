@@ -95,7 +95,7 @@
     "address": "1005 NE 67th St, Seattle, WA",
     "latitude": 47.6771,
     "longitude": -122.3169,
-    "accepts": ["clothing", "books-toys"],
+    "accepts": ["clothing", "toys-games"],
     "note": "Kids' clothing and small toys only. Tue 11–1, Wed 2–5, Thu 2–4, Fri 11–2. Ring the doorbell.",
     "website": "https://www.familyworksseattle.org/donate-food-clothing-items/"
   },
@@ -115,7 +115,7 @@
     "address": "2100 24th Ave S, Seattle, WA",
     "latitude": 47.5842,
     "longitude": -122.3013,
-    "accepts": ["clothing", "books-toys"],
+    "accepts": ["clothing", "books", "toys-games"],
     "note": "Clothing and books new or like-new, toys brand-new only. Alley loading dock, Tue–Fri 9–4, Sat 9–2. Book ahead for a carload or more.",
     "website": "https://www.treehouseforkids.org/take-action/give/donate-clothing-goods/"
   },
@@ -125,7 +125,7 @@
     "address": "10002 14th Ave SW, Seattle, WA",
     "latitude": 47.5134,
     "longitude": -122.3523,
-    "accepts": ["clothing", "books-toys"],
+    "accepts": ["clothing", "books", "toys-games"],
     "note": "Kids' items only, up to size 14/16 and ages 0–12. Mon–Thu 9–4. No cribs, car seats, or furniture.",
     "website": "https://westsidebaby.org/donate-items/"
   },
@@ -135,7 +135,7 @@
     "address": "17230 12th Ave NE, Shoreline, WA",
     "latitude": 47.7542,
     "longitude": -122.3156,
-    "accepts": ["clothing", "books-toys", "sports", "household"],
+    "accepts": ["clothing", "books", "toys-games", "sports", "household"],
     "note": "Kids' items only: clothing, toys, books, bikes, bedding, towels. Tue 10–12, Sat 11–1. Sign up on their site.",
     "website": "https://kidvantagenw.org/donate-goods/"
   },
@@ -145,7 +145,7 @@
     "address": "1510 NW Maple St, Issaquah, WA",
     "latitude": 47.5433,
     "longitude": -122.0605,
-    "accepts": ["clothing", "books-toys", "sports", "household"],
+    "accepts": ["clothing", "books", "toys-games", "sports", "household"],
     "note": "Kids' items only. Tue and Fri 9:30–11, some Saturdays. Sign up on their site.",
     "website": "https://kidvantagenw.org/donate-goods/"
   },
@@ -155,7 +155,7 @@
     "address": "1400 S Lane St, Seattle, WA",
     "latitude": 47.5969,
     "longitude": -122.3145,
-    "accepts": ["clothing", "household", "electronics", "books-toys"],
+    "accepts": ["clothing", "household", "electronics", "books", "toys-games"],
     "note": "For now, only items up to carry-on suitcase size. Take furniture to Ballard or Shoreline. Daily 10–7.",
     "website": "https://evergreengoodwill.org/donate-goods/"
   },
@@ -165,7 +165,7 @@
     "address": "6400 8th Ave NW, Seattle, WA",
     "latitude": 47.6751,
     "longitude": -122.3655,
-    "accepts": ["clothing", "furniture", "household", "electronics", "books-toys"],
+    "accepts": ["clothing", "furniture", "household", "electronics", "books", "toys-games"],
     "note": "Takes larger donations and furniture. Daily 10–7, may pause 1–4pm. No mattresses, pianos, or large fitness equipment.",
     "website": "https://evergreengoodwill.org/donate-goods/"
   },
@@ -185,7 +185,7 @@
     "address": "115 Belmont Ave E, Seattle, WA",
     "latitude": 47.619,
     "longitude": -122.3244,
-    "accepts": ["clothing", "furniture", "household", "electronics", "books-toys"],
+    "accepts": ["clothing", "furniture", "household", "electronics", "books", "toys-games"],
     "note": "Daily 10–7. Small site, so call (206) 812-7583 before bringing furniture.",
     "website": "https://evergreengoodwill.org/locations/capitol-hill-goodwill/"
   },
@@ -205,7 +205,7 @@
     "address": "14500 15th Ave NE, Shoreline, WA",
     "latitude": 47.7341,
     "longitude": -122.3126,
-    "accepts": ["clothing", "furniture", "household", "electronics", "books-toys"],
+    "accepts": ["clothing", "furniture", "household", "electronics", "books", "toys-games"],
     "note": "Takes larger donations and furniture. Daily 10–7.",
     "website": "https://evergreengoodwill.org/locations/shoreline-goodwill/"
   },
@@ -215,7 +215,7 @@
     "address": "5972 4th Ave S, Seattle, WA",
     "latitude": 47.5485,
     "longitude": -122.3292,
-    "accepts": ["clothing", "household", "electronics", "books-toys"],
+    "accepts": ["clothing", "household", "electronics", "books", "toys-games"],
     "note": "Drop-off only, no store. Tue–Fri 10–3. No furniture at this site.",
     "website": "https://svdpseattle.org/thriftstore/"
   },
@@ -225,7 +225,7 @@
     "address": "7304 NE Bothell Way, Kenmore, WA",
     "latitude": 47.7581,
     "longitude": -122.2433,
-    "accepts": ["clothing", "furniture", "household", "electronics", "books-toys"],
+    "accepts": ["clothing", "furniture", "household", "electronics", "books", "toys-games"],
     "note": "Mon–Sat 11–4. Call 425-483-9497 before bringing furniture.",
     "website": "https://svdpseattle.org/thriftstore/"
   },
@@ -235,7 +235,7 @@
     "address": "16700 Southcenter Pkwy, Tukwila, WA",
     "latitude": 47.4533,
     "longitude": -122.2604,
-    "accepts": ["clothing", "furniture", "household", "electronics", "books-toys", "sports"],
+    "accepts": ["clothing", "furniture", "household", "electronics", "books", "toys-games", "sports"],
     "note": "Small furniture only. Daily 9–8. Donations benefit Northwest Center.",
     "website": "https://stores.savers.com/wa/tukwila/community-donation-center-cdc1173.html"
   },
@@ -245,7 +245,7 @@
     "address": "1415 N 45th St, Seattle, WA",
     "latitude": 47.6612,
     "longitude": -122.3399,
-    "accepts": ["clothing", "household", "books-toys"],
+    "accepts": ["clothing", "household", "books"],
     "note": "Adult clothing, kitchenware, decor, linens, books, DVDs. Thu–Fri 12–4, Sat 10–4. No kids' items or electronics.",
     "website": "https://www.assistanceleague.org/chapter/seattle/thrift-store"
   },
@@ -295,7 +295,7 @@
     "address": "5608 6th Ave S, Seattle, WA",
     "latitude": 47.5522,
     "longitude": -122.3264,
-    "accepts": ["books-toys"],
+    "accepts": ["books"],
     "note": "Books only, no DVDs, CDs, or magazines. Thursdays and the 2nd Saturday, 10–3. Up to about 15 boxes.",
     "website": "https://www.friendsofspl.org/donate"
   },
@@ -305,7 +305,7 @@
     "address": "92 Pike St, Seattle, WA",
     "latitude": 47.6089,
     "longitude": -122.3404,
-    "accepts": ["books-toys"],
+    "accepts": ["books"],
     "note": "Paperbacks preferred, 1–2 boxes. No textbooks, CDs, or marked books.",
     "website": "https://www.bookstoprisoners.net/donate-books"
   },
@@ -315,7 +315,7 @@
     "address": "5030 Roosevelt Way NE, Seattle, WA",
     "latitude": 47.666,
     "longitude": -122.3171,
-    "accepts": ["books-toys"],
+    "accepts": ["books"],
     "note": "DVDs and other video. Recommended by the library Friends. Call 206-524-8554 first.",
     "website": "https://www.friendsofspl.org/donate"
   },
