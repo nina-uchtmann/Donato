@@ -12,16 +12,16 @@ LogBox.ignoreLogs(['Ended a touch event which was not counted in `trackedTouchCo
 export default function RootLayout() {
   return (
     <>
-      <StatusBar style="light" />
+      <StatusBar style="dark" />
       <Stack
         screenOptions={{
-          headerStyle: { backgroundColor: colors.primary },
-          headerTintColor: '#fff',
-          headerTitleStyle: { fontWeight: '700' },
+          headerStyle: { backgroundColor: '#EAF6EF' },
+          headerTintColor: colors.text,
+          headerTitleStyle: { fontFamily: 'Inter_700Bold', fontWeight: '700' },
           contentStyle: { backgroundColor: colors.background },
         }}
       >
-        <Stack.Screen name="index" options={{ title: 'Donato' }} />
+        <Stack.Screen name="index" options={{ title: 'Home', headerShown: false }} />
         <Stack.Screen name="results" options={{ title: 'Nearby drop-offs' }} />
       </Stack>
     </>

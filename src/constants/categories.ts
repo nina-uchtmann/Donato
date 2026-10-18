@@ -29,9 +29,9 @@ export function isCategory(value: unknown): value is Category {
 
 export const colors = {
   primary: '#2E7D5B',
-  primaryLight: '#E3F2EA',
-  text: '#1B1F1D',
-  muted: '#5F6B66',
+  primaryLight: '#E8F3ED',
+  text: '#18201C',
+  muted: '#66736D',
   border: '#D9E2DD',
   background: '#F7FAF8',
   card: '#FFFFFF',

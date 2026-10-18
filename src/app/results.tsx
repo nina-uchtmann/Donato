@@ -1,3 +1,11 @@
+import {
+  Inter_400Regular,
+  Inter_500Medium,
+  Inter_600SemiBold,
+  Inter_700Bold,
+  useFonts,
+} from '@expo-google-fonts/inter';
+import { LinearGradient } from 'expo-linear-gradient';
 import { useLocalSearchParams } from 'expo-router';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import {
@@ -68,6 +76,12 @@ const MAX_MAYBE = 10;
 const PARTIAL_PIN = '#E0A100';
 
 export default function ResultsScreen() {
+  const [fontsLoaded] = useFonts({
+    Inter_400Regular,
+    Inter_500Medium,
+    Inter_600SemiBold,
+    Inter_700Bold,
+  });
   // `categories` is a comma-separated list; `category` is the older single-category param.
   const params = useLocalSearchParams<{ categories?: string; category?: string }>();
   const selected = useMemo(
@@ -170,17 +184,35 @@ export default function ResultsScreen() {
       .slice(0, MAX_MAYBE);
   }, [coords, sparse, maxDistance, results]);
 
-  if (!coords) {
+  if (!coords || !fontsLoaded) {
     return (
-      <View style={styles.centered}>
-        <ActivityIndicator size="large" color={colors.primary} />
-        <Text style={styles.muted}>Finding your location…</Text>
-      </View>
+      <LinearGradient
+        colors={['#EAF6EF', colors.background, '#FFFFFF']}
+        locations={[0, 0.58, 1]}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 0, y: 1 }}
+        style={styles.flex}
+      >
+        <View style={styles.centered}>
+          <ActivityIndicator size="large" color={colors.primary} />
+          <Text style={styles.muted}>
+            {fontsLoaded ? 'Finding your location…' : 'Getting things ready…'}
+          </Text>
+        </View>
+      </LinearGradient>
     );
   }
 
   return (
     <View style={styles.flex}>
+      <LinearGradient
+        colors={['#EAF6EF', colors.background, '#FFFFFF']}
+        locations={[0, 0.58, 1]}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 0, y: 1 }}
+        style={StyleSheet.absoluteFill}
+        pointerEvents="none"
+      />
       <View style={styles.searchBar}>
         <TextInput
           style={styles.searchInput}
@@ -201,54 +233,56 @@ export default function ResultsScreen() {
         </Pressable>
       </View>
 
-      {Platform.OS === 'ios' ? (
-        <MapView
-          ref={mapRef}
-          style={styles.map}
-          showsUserLocation={!isFallback}
-          initialRegion={{ ...coords, latitudeDelta: 0.12, longitudeDelta: 0.12 }}
-          onLongPress={(e) => moveTo(e.nativeEvent.coordinate)}
-        >
-          {[...results, ...maybe].slice(0, MAX_MARKERS).map((c) => (
+      <View style={styles.mapFrame}>
+        {Platform.OS === 'ios' ? (
+          <MapView
+            ref={mapRef}
+            style={styles.map}
+            showsUserLocation={!isFallback}
+            initialRegion={{ ...coords, latitudeDelta: 0.12, longitudeDelta: 0.12 }}
+            onLongPress={(e) => moveTo(e.nativeEvent.coordinate)}
+          >
+            {[...results, ...maybe].slice(0, MAX_MARKERS).map((c) => (
+              <Marker
+                key={c.id}
+                coordinate={{ latitude: c.latitude, longitude: c.longitude }}
+                title={c.name}
+                description={
+                  'maybe' in c
+                    ? 'Might accept. Call first.'
+                    : multi
+                      ? `Takes ${c.covers.length} of ${selected.length}`
+                      : c.address
+                }
+                pinColor={
+                  'maybe' in c
+                    ? colors.muted
+                    : c.covers.length < selected.length
+                      ? PARTIAL_PIN
+                      : colors.primary
+                }
+              />
+            ))}
             <Marker
-              key={c.id}
-              coordinate={{ latitude: c.latitude, longitude: c.longitude }}
-              title={c.name}
-              description={
-                'maybe' in c
-                  ? 'Might accept. Call first.'
-                  : multi
-                    ? `Takes ${c.covers.length} of ${selected.length}`
-                    : c.address
-              }
-              pinColor={
-                'maybe' in c
-                  ? colors.muted
-                  : c.covers.length < selected.length
-                    ? PARTIAL_PIN
-                    : colors.primary
-              }
+              key="search-spot"
+              coordinate={coords}
+              title="Searching from here"
+              description="Drag the pin or long-press the map to move it"
+              pinColor="tomato"
+              draggable
+              onDragEnd={(e) => moveTo(e.nativeEvent.coordinate)}
+              zIndex={1000}
             />
-          ))}
-          <Marker
-            key="search-spot"
-            coordinate={coords}
-            title="Searching from here"
-            description="Drag the pin or long-press the map to move it"
-            pinColor="tomato"
-            draggable
-            onDragEnd={(e) => moveTo(e.nativeEvent.coordinate)}
-            zIndex={1000}
-          />
-        </MapView>
-      ) : (
-        <View style={styles.mapUnavailable}>
-          <Text style={styles.mapUnavailableText}>
-            Map preview is unavailable on Android in Expo Go. Search above to look somewhere else,
-            browse nearby places below, and tap Directions to open Google Maps.
-          </Text>
-        </View>
-      )}
+          </MapView>
+        ) : (
+          <View style={styles.mapUnavailable}>
+            <Text style={styles.mapUnavailableText}>
+              Map preview is unavailable on Android in Expo Go. Search above to look somewhere else,
+              browse nearby places below, and tap Directions to open Google Maps.
+            </Text>
+          </View>
+        )}
+      </View>
 
       {movedTo && (
         <View style={styles.movedBar}>
@@ -277,6 +311,10 @@ export default function ResultsScreen() {
           minimumTrackTintColor={colors.primary}
           maximumTrackTintColor={colors.border}
         />
+        <View style={styles.sliderLabels}>
+          <Text style={styles.sliderLabel}>1 mi</Text>
+          <Text style={styles.sliderLabel}>25 mi</Text>
+        </View>
       </View>
 
       <FlatList
@@ -290,6 +328,7 @@ export default function ResultsScreen() {
               {selected.length ? ' ' : ''}
               {results.length} {results.length === 1 ? 'place' : 'places'} within {maxDistance} mi
             </Text>
+            <Text style={styles.muted}>Donation spots near your search area</Text>
             {multi && results.length > 0 && (
               <Text style={styles.muted}>
                 {takesEverything
@@ -422,106 +461,134 @@ function openDirections({ latitude, longitude }: Coords) {
 const styles = StyleSheet.create({
   flex: { flex: 1 },
   centered: { flex: 1, alignItems: 'center', justifyContent: 'center', gap: 12 },
-  map: { width: '100%', height: 240 },
-  mapUnavailable: {
-    height: 240,
-    paddingHorizontal: 24,
-    alignItems: 'center',
-    justifyContent: 'center',
+  mapFrame: {
+    height: 216,
+    marginHorizontal: 16,
+    borderRadius: 18,
+    overflow: 'hidden',
+    borderWidth: 1,
+    borderColor: colors.border,
     backgroundColor: colors.primaryLight,
   },
+  map: { width: '100%', height: '100%' },
+  mapUnavailable: {
+    flex: 1,
+    paddingHorizontal: 22,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: 'rgba(232,243,237,0.92)',
+  },
   mapUnavailableText: {
+    fontFamily: 'Inter_400Regular',
     color: colors.muted,
     fontSize: 14,
-    lineHeight: 20,
+    lineHeight: 21,
     textAlign: 'center',
   },
-  list: { padding: 16, gap: 10 },
-  header: { gap: 8, marginBottom: 4 },
-  headerTitle: { fontSize: 18, fontWeight: '700', color: colors.text },
+  list: { paddingHorizontal: 16, paddingTop: 12, paddingBottom: 28, gap: 10 },
+  header: { gap: 5, marginBottom: 4 },
+  headerTitle: { fontFamily: 'Inter_700Bold', fontSize: 18, color: colors.text },
   searchBar: {
     flexDirection: 'row',
-    gap: 8,
-    padding: 10,
-    backgroundColor: colors.card,
-    borderBottomWidth: 1,
-    borderColor: colors.border,
+    gap: 10,
+    paddingHorizontal: 16,
+    paddingTop: 12,
+    paddingBottom: 12,
   },
   searchInput: {
     flex: 1,
     borderWidth: 1,
     borderColor: colors.border,
-    borderRadius: 10,
-    paddingHorizontal: 12,
-    paddingVertical: Platform.OS === 'ios' ? 10 : 6,
-    fontSize: 15,
+    borderRadius: 14,
+    paddingHorizontal: 15,
+    paddingVertical: Platform.OS === 'ios' ? 12 : 8,
+    fontFamily: 'Inter_400Regular',
+    fontSize: 14,
     color: colors.text,
-    backgroundColor: colors.background,
+    backgroundColor: 'rgba(255,255,255,0.92)',
   },
   searchButton: {
     backgroundColor: colors.primary,
-    borderRadius: 10,
-    paddingHorizontal: 16,
+    borderRadius: 14,
+    paddingHorizontal: 18,
     justifyContent: 'center',
-    minWidth: 52,
+    minWidth: 78,
     alignItems: 'center',
   },
-  searchButtonText: { color: '#fff', fontWeight: '700', fontSize: 15 },
+  searchButtonText: { color: '#fff', fontFamily: 'Inter_600SemiBold', fontSize: 14 },
   movedBar: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
     gap: 12,
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    backgroundColor: colors.primaryLight,
+    marginHorizontal: 16,
+    marginBottom: 8,
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+    borderRadius: 12,
+    backgroundColor: 'rgba(232,243,237,0.92)',
   },
-  movedText: { flex: 1, color: colors.text, fontWeight: '600' },
-  movedLink: { color: colors.primary, fontWeight: '700' },
+  movedText: { flex: 1, color: colors.text, fontFamily: 'Inter_500Medium', fontSize: 13 },
+  movedLink: { color: colors.primary, fontFamily: 'Inter_600SemiBold', fontSize: 12 },
   searchError: {
-    paddingHorizontal: 16,
-    paddingVertical: 8,
+    marginHorizontal: 16,
+    marginBottom: 8,
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+    borderRadius: 12,
     backgroundColor: colors.warningBg,
     color: colors.warning,
+    fontFamily: 'Inter_400Regular',
     fontSize: 13,
   },
   sliderContainer: {
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    borderBottomWidth: 1,
+    marginHorizontal: 16,
+    marginTop: 12,
+    padding: 13,
+    borderRadius: 16,
+    borderWidth: 1,
     borderColor: colors.border,
-    backgroundColor: colors.card,
+    backgroundColor: 'rgba(255,255,255,0.92)',
+    gap: 3,
   },
-  sliderTitle: { fontSize: 15, fontWeight: '700', color: colors.text },
+  sliderTitle: { fontFamily: 'Inter_600SemiBold', fontSize: 14, color: colors.text },
   slider: { width: '100%', height: 40 },
+  sliderLabels: { flexDirection: 'row', justifyContent: 'space-between' },
+  sliderLabel: { fontFamily: 'Inter_400Regular', color: colors.muted, fontSize: 11 },
   notice: {
     backgroundColor: colors.warningBg,
     color: colors.warning,
     padding: 10,
-    borderRadius: 10,
+    borderRadius: 12,
+    fontFamily: 'Inter_400Regular',
     fontSize: 13,
   },
-  muted: { color: colors.muted, fontSize: 14 },
+  muted: { color: colors.muted, fontFamily: 'Inter_400Regular', fontSize: 13, lineHeight: 19 },
   card: {
-    backgroundColor: colors.card,
-    borderRadius: 14,
-    padding: 14,
-    gap: 6,
+    backgroundColor: 'rgba(255,255,255,0.96)',
+    borderRadius: 17,
+    padding: 15,
+    gap: 9,
     borderWidth: 1,
-    borderColor: colors.border,
+    borderColor: 'rgba(217,226,221,0.9)',
+    shadowColor: '#18201C',
+    shadowOpacity: 0.045,
+    shadowRadius: 10,
+    shadowOffset: { width: 0, height: 4 },
+    elevation: 2,
   },
-  cardTop: { flexDirection: 'row', justifyContent: 'space-between', gap: 8 },
-  cardName: { fontSize: 16, fontWeight: '700', color: colors.text, flex: 1 },
-  distance: { fontSize: 15, fontWeight: '700', color: colors.primary },
+  cardTop: { flexDirection: 'row', alignItems: 'flex-start', justifyContent: 'space-between', gap: 10 },
+  cardName: { fontFamily: 'Inter_600SemiBold', fontSize: 15, lineHeight: 21, color: colors.text, flex: 1 },
+  distance: { fontFamily: 'Inter_700Bold', fontSize: 13, color: colors.primary, paddingTop: 2 },
   cardMeta: { flexDirection: 'row', alignItems: 'center', gap: 8 },
   coverage: {
     alignSelf: 'flex-start',
-    fontSize: 12,
-    fontWeight: '700',
-    paddingHorizontal: 8,
-    paddingVertical: 3,
-    borderRadius: 6,
     overflow: 'hidden',
+    borderRadius: 8,
+    paddingHorizontal: 9,
+    paddingVertical: 5,
+    fontFamily: 'Inter_600SemiBold',
+    fontSize: 12,
   },
   coverageFull: { backgroundColor: colors.primaryLight, color: colors.primary },
   coveragePartial: { backgroundColor: colors.warningBg, color: colors.warning },
@@ -533,18 +600,25 @@ const styles = StyleSheet.create({
     borderTopWidth: 1,
     borderColor: colors.border,
   },
-  detailText: { fontSize: 13, color: colors.text, lineHeight: 18 },
-  source: { fontSize: 12, color: colors.muted },
-  maybeSection: { gap: 6, marginTop: 8 },
-  maybeTitle: { fontSize: 16, fontWeight: '700', color: colors.text },
-  moreText: { marginLeft: 'auto', color: colors.muted, fontSize: 13, fontWeight: '600' },
-  attribution: { fontSize: 11, color: colors.muted, textAlign: 'center', marginTop: 8 },
-  actions: { flexDirection: 'row', flexWrap: 'wrap', alignItems: 'center', gap: 8, marginTop: 4 },
+  detailText: { fontFamily: 'Inter_400Regular', fontSize: 13, color: colors.text, lineHeight: 20 },
+  source: { fontFamily: 'Inter_400Regular', fontSize: 11, color: colors.muted, lineHeight: 16 },
+  maybeSection: { gap: 7, marginTop: 8 },
+  maybeTitle: { fontFamily: 'Inter_700Bold', fontSize: 16, color: colors.text },
+  moreText: { marginLeft: 'auto', color: colors.muted, fontFamily: 'Inter_500Medium', fontSize: 12 },
+  attribution: {
+    fontFamily: 'Inter_400Regular',
+    fontSize: 10,
+    lineHeight: 16,
+    color: colors.muted,
+    textAlign: 'center',
+    marginTop: 8,
+  },
+  actions: { flexDirection: 'row', flexWrap: 'wrap', alignItems: 'center', gap: 8, marginTop: 2 },
   directions: {
     backgroundColor: colors.primaryLight,
-    paddingVertical: 8,
-    paddingHorizontal: 14,
-    borderRadius: 8,
+    paddingVertical: 9,
+    paddingHorizontal: 13,
+    borderRadius: 10,
   },
-  directionsText: { color: colors.primary, fontWeight: '700' },
+  directionsText: { color: colors.primary, fontFamily: 'Inter_600SemiBold', fontSize: 12 },
 });
