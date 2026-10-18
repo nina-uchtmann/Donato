@@ -29,7 +29,8 @@
     "ios": "expo start --ios",
     "web": "expo start --web",
     "typecheck": "tsc --noEmit",
-    "test:vision": "node --env-file-if-exists=.env scripts/test-vision.mjs"
+    "test:vision": "node --env-file-if-exists=.env scripts/test-vision.mjs",
+    "import:data": "node scripts/import-datasets.mjs"
   },
   "private": true
 }

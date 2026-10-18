@@ -20,6 +20,31 @@ export async function getUserCoords(): Promise<{ coords: Coords; isFallback: boo
   }
 }
 
+/**
+ * Turns a city, ZIP code, or address into coordinates using the phone's built-in
+ * geocoder. Searches are assumed to be in Washington unless a state is given.
+ * Returns null when nothing matches. Android needs location permission for this.
+ */
+export async function geocode(query: string): Promise<Coords | null> {
+  const text = query.trim();
+  if (!text) return null;
+  const withState = /\b(wa|washington)\b|,\s*[a-z]{2}\b/i.test(text) ? text : `${text}, Washington`;
+  const [match] = await Location.geocodeAsync(withState);
+  return match ? { latitude: match.latitude, longitude: match.longitude } : null;
+}
+
+/** A short name for a spot, like "Fremont, Seattle" or "Spokane". Null if unknown. */
+export async function placeName(coords: Coords): Promise<string | null> {
+  try {
+    const [place] = await Location.reverseGeocodeAsync(coords);
+    if (!place) return null;
+    const area = place.district && place.district !== place.city ? place.district : null;
+    return [area, place.city ?? place.subregion].filter(Boolean).join(', ') || place.name || null;
+  } catch {
+    return null;
+  }
+}
+
 /** Great-circle distance in miles (haversine formula). */
 export function distanceMiles(a: Coords, b: Coords): number {
   const toRad = (deg: number) => (deg * Math.PI) / 180;

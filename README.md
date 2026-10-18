@@ -39,7 +39,7 @@ Donato removes those steps so that giving something away takes less effort than 
 | 🎸 Musical instruments | Guitars, violins, keyboards | Ted Brown Music, Music4Life, Seattle JazzED |
 | 🥫 Food | Canned goods, pasta, cereal | Food banks |
 
-Donato currently covers the **Seattle area**.
+Donato covers **all of Washington State**, with the most detail in the Seattle area.
 
 ## Try It
 
@@ -62,12 +62,19 @@ Donato is a hackathon project and isn't in the App Store or Google Play yet. To 
 
 ## Good to Know
 
-Donato lists about 40 real donation spots, checked against each organization's own website in October 2026. Hours and what they accept change, so tap **Donation info** or call ahead before dropping off.
+Donato lists about **480 donation spots across Washington**:
+
+- **About 40 spots our team checked by hand** against each organization's own website in October 2026. These have the most detailed notes.
+- **About 440 more from public data:** [OpenStreetMap](https://www.openstreetmap.org) (statewide), the City of Seattle's food bank list, and King County's reuse directory. Each one shows its source.
+
+Hours and what they accept change, so tap **Donation info** or **Call** before dropping off.
+
+Map data © [OpenStreetMap contributors](https://www.openstreetmap.org/copyright).
 
 ## Roadmap
 
-- [ ] Full Seattle and King County directory from public datasets
-- [ ] Hours, phone numbers, and websites for each location
+- [x] Statewide directory from public datasets
+- [ ] "Open now" badges from structured hours
 - [ ] Perishable vs. non-perishable food detection
 - [ ] Detect multiple items in a single photo
 - [ ] Pickup scheduling for large furniture
