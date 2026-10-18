@@ -144,11 +144,31 @@ function categoriesFor(label: string): Category[] {
  */
 const WORN_CLOTHING_WEIGHT = 0.5;
 
-/** Picks the donation category whose keywords best match the Vision labels. */
+/**
+ * Thresholds for picking more than one category, e.g. for a photo of a donation
+ * pile. Besides the top category, another one is included when Vision found a
+ * separate object for it, or when its labels are confident and not far behind.
+ */
+const OBJECT_MIN_SCORE = 0.6;
+const LABEL_MIN_SCORE = 0.7;
+const LABEL_MIN_SHARE_OF_BEST = 0.4;
+const MAX_CATEGORIES = 4;
+
+/** Picks the single donation category whose keywords best match the Vision labels. */
 export function classify(labels: VisionLabel[]): Category | null {
+  return classifyAll(labels)[0] ?? null;
+}
+
+/**
+ * Picks every donation category with strong evidence in the photo, best match
+ * first. A photo of one item usually gives one category; a pile gives several.
+ */
+export function classifyAll(labels: VisionLabel[]): Category[] {
   const scores = Object.fromEntries(
     (Object.keys(KEYWORDS) as Category[]).map((c) => [c, 0]),
   ) as Record<Category, number>;
+  /** Highest score of a separate object Vision found for each category. */
+  const objectScores = { ...scores };
 
   // Count each label once at its highest score. Vision often repeats a name,
   // such as one "Clothing" object per person, which would inflate that category.
@@ -166,6 +186,26 @@ export function classify(labels: VisionLabel[]): Category | null {
     }
   }
 
-  const [best, bestScore] = Object.entries(scores).sort((a, b) => b[1] - a[1])[0];
-  return bestScore > 0 ? (best as Category) : null;
+  for (const { description, score, kind } of labels) {
+    if (kind !== 'object') continue;
+    for (const category of categoriesFor(description)) {
+      // Clothes on a person in the photo aren't a separate item being donated.
+      if (category === 'clothing' && hasPerson) continue;
+      objectScores[category] = Math.max(objectScores[category], score);
+    }
+  }
+
+  const ranked = (Object.keys(scores) as Category[])
+    .filter((c) => scores[c] > 0)
+    .sort((a, b) => scores[b] - scores[a]);
+  if (!ranked.length) return [];
+
+  const bestScore = scores[ranked[0]];
+  const others = ranked.slice(1).filter((c) => {
+    if (objectScores[c] >= OBJECT_MIN_SCORE) return true;
+    // Clothing labels with a person in the photo usually describe what they're wearing.
+    if (c === 'clothing' && hasPerson) return false;
+    return scores[c] >= LABEL_MIN_SCORE && scores[c] >= bestScore * LABEL_MIN_SHARE_OF_BEST;
+  });
+  return [ranked[0], ...others].slice(0, MAX_CATEGORIES);
 }

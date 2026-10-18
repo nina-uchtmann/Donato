@@ -21,8 +21,8 @@ Donato removes those steps so that giving something away takes less effort than 
 ## How It Works
 
 1. 📸 **Snap.** Take a photo of your item, or upload one from your photo library.
-2. 🧠 **Identify.** Donato recognizes the item with Google Vision and sorts it into one of nine categories, from clothing and furniture to electronics, books, and food. If it guesses wrong, tap the right category.
-3. 📍 **Locate.** Donato uses your location to find nearby places that accept *that kind of item*, not just the closest donation center.
+2. 🧠 **Identify.** Donato recognizes your items with Google Vision and sorts them into categories, from clothing and furniture to electronics, books, and food. Photograph a whole donation pile and it picks every kind of item it sees. Tap to add or remove categories if it guesses wrong.
+3. 📍 **Locate.** Donato uses your location to find nearby places that accept *those items*, not just the closest donation center. Places that take everything in your pile come first.
 4. 🧭 **Go.** See results on a map and in a list sorted by distance, then tap **Directions** to open Apple Maps or Google Maps.
 
 ## What You Can Donate

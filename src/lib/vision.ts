@@ -4,7 +4,12 @@ const TIMEOUT_MS = 15000;
 
 export const hasVisionKey = Boolean(API_KEY);
 
-export type VisionLabel = { description: string; score: number };
+export type VisionLabel = {
+  description: string;
+  score: number;
+  /** 'object' is one item found in the photo; 'label' describes the photo as a whole. */
+  kind: 'object' | 'label';
+};
 
 /**
  * Sends a base64 JPEG to Google Cloud Vision and returns label and object
@@ -55,10 +60,12 @@ export async function detectLabels(base64Image: string): Promise<VisionLabel[]> 
   const labels: VisionLabel[] = (result?.labelAnnotations ?? []).map((l: any) => ({
     description: l.description,
     score: l.score,
+    kind: 'label' as const,
   }));
   const objects: VisionLabel[] = (result?.localizedObjectAnnotations ?? []).map((o: any) => ({
     description: o.name,
     score: o.score,
+    kind: 'object' as const,
   }));
 
   const all = [...objects, ...labels].sort((a, b) => b.score - a.score);
