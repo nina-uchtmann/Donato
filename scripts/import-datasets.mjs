@@ -11,10 +11,17 @@
 // If a source fails to download, its entries from the previous imported.json are
 // kept, so a flaky server never wipes data. OpenStreetMap data is © OpenStreetMap
 // contributors, available under the ODbL; the app must show that attribution.
+//
+// Places without a street address get one from OpenStreetMap's Nominatim reverse
+// geocoder (1 request per second, per its usage policy). Results are saved in
+// scripts/geocode-cache.json, so later runs only look up new places.
+// Pass --no-geocode to skip this step.
 import { readFile, writeFile } from 'node:fs/promises';
 
 const OUT = new URL('../src/data/imported.json', import.meta.url);
 const CURATED = new URL('../src/data/centers.json', import.meta.url);
+const GEOCODE_CACHE = new URL('./geocode-cache.json', import.meta.url);
+const SKIP_GEOCODE = process.argv.includes('--no-geocode');
 const USER_AGENT = 'Donato/1.0 (DubHacks 2026 donation finder; github.com/nina-uchtmann/Donato)';
 
 /** Rough bounding box for Washington State, used to drop bad coordinates. */
@@ -397,6 +404,82 @@ function makeGrid() {
   };
 }
 
+// --- Reverse geocoding (fills in missing addresses) -----------------------------
+
+const NOMINATIM = 'https://nominatim.openstreetmap.org/reverse';
+
+/** A street address has a number in it; "Seattle, WA" alone doesn't count. */
+const hasStreetAddress = (place) => /\d/.test(place.address ?? '');
+
+const cacheKey = (p) => `${p.latitude.toFixed(5)},${p.longitude.toFixed(5)}`;
+
+/** Formats a Nominatim result as "123 Main St, Spokane, WA", or "Near Main St, …" without a house number. */
+function formatAddress(a = {}) {
+  const city = a.city ?? a.town ?? a.village ?? a.hamlet ?? a.suburb ?? a.county;
+  const street = a.road ?? a.pedestrian ?? a.footway ?? a.neighbourhood;
+  if (!street && !city) return null;
+  const line = a.house_number && street ? `${a.house_number} ${street}` : street ? `Near ${street}` : null;
+  return [line, city, 'WA'].filter(Boolean).join(', ');
+}
+
+async function fillMissingAddresses(places) {
+  let cache = {};
+  try {
+    cache = JSON.parse(await readFile(GEOCODE_CACHE, 'utf8'));
+  } catch {}
+
+  const missing = places.filter((p) => !hasStreetAddress(p));
+  const toLookUp = missing.filter((p) => !(cacheKey(p) in cache));
+  console.log(`\n▸ Addresses: ${missing.length} places missing one, ${toLookUp.length} not looked up before`);
+  if (toLookUp.length && SKIP_GEOCODE) console.log('  … skipped (--no-geocode)');
+  if (toLookUp.length && !SKIP_GEOCODE) {
+    console.log(`  … looking up 1 per second (about ${Math.ceil(toLookUp.length / 60)} min)`);
+  }
+
+  let looked = 0;
+  for (const place of SKIP_GEOCODE ? [] : toLookUp) {
+    const started = Date.now();
+    try {
+      const url = `${NOMINATIM}?${new URLSearchParams({
+        format: 'jsonv2',
+        lat: String(place.latitude),
+        lon: String(place.longitude),
+        zoom: '18',
+        addressdetails: '1',
+      })}`;
+      const res = await fetch(url, { headers: { 'User-Agent': USER_AGENT }, signal: AbortSignal.timeout(20_000) });
+      if (res.status === 429 || res.status === 403) {
+        console.log(`  ✗ Nominatim refused requests (HTTP ${res.status}). Stopping; run again later.`);
+        break;
+      }
+      if (res.ok) {
+        cache[cacheKey(place)] = formatAddress((await res.json()).address);
+        looked++;
+      }
+    } catch (e) {
+      console.log(`  … ${place.name}: ${e.message}`);
+    }
+    // Save progress regularly so an interrupted run doesn't repeat lookups.
+    if (looked && looked % 25 === 0) {
+      await writeFile(GEOCODE_CACHE, JSON.stringify(cache, null, 1) + '\n');
+      console.log(`  … ${looked}/${toLookUp.length}`);
+    }
+    await sleep(Math.max(0, 1100 - (Date.now() - started)));
+  }
+  if (looked) await writeFile(GEOCODE_CACHE, JSON.stringify(cache, null, 1) + '\n');
+
+  let filled = 0;
+  for (const place of missing) {
+    const address = cache[cacheKey(place)];
+    if (address) {
+      place.address = address;
+      filled++;
+    }
+  }
+  console.log(`  ✓ ${filled} addresses filled in, ${missing.length - filled} still missing`);
+  return { looked, filled };
+}
+
 // --- Main ----------------------------------------------------------------------
 
 const SOURCES = [
@@ -465,6 +548,8 @@ for (const source of SOURCES) {
   stats.push({ source: source.label, found: places.length, added, duplicates, outside, reused });
   console.log(`  ✓ ${places.length} found, ${added} added, ${duplicates} duplicates, ${outside} outside WA`);
 }
+
+await fillMissingAddresses(merged);
 
 // Stable ids and order keep git diffs small between runs.
 const seen = new Map();
