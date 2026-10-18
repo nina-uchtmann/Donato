@@ -33,8 +33,7 @@ Donato removes those steps so that giving something away takes less effort than 
 | 🛋️ Furniture | Chairs, sofas, tables, dressers | Goodwill (Ballard, Shoreline), Habitat for Humanity stores |
 | 🍳 Kitchen & household | Mugs, pans, lamps, blankets, small appliances | Goodwill, St. Vincent de Paul, Assistance League |
 | 📱 Electronics | Phones, laptops, headphones, TVs | PCs for People, Goodwill |
-| 📚 Books & media | Books, DVDs | Friends of the Seattle Public Library, Books to Prisoners |
-| 🧸 Toys & games | Stuffed animals, LEGO, puzzles, board games | WestSide Baby, KidVantage, Goodwill |
+| 📚 Books, toys & games | Books, DVDs, stuffed animals, LEGO, puzzles, board games | Friends of the Seattle Public Library, WestSide Baby, KidVantage, Goodwill |
 | ⚽ Sports & outdoors | Bikes, tents, skis, outdoor gear | Bike Works, The Mountaineers, Value Village |
 | 🎸 Musical instruments | Guitars, violins, keyboards | Ted Brown Music, Music4Life, Seattle JazzED |
 | 🥫 Food | Canned goods, pasta, cereal | Food banks |

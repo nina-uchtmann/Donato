@@ -3,8 +3,7 @@ export type Category =
   | 'furniture'
   | 'household'
   | 'electronics'
-  | 'books'
-  | 'toys'
+  | 'books-toys'
   | 'sports'
   | 'instruments'
   | 'food';
@@ -14,8 +13,7 @@ export const CATEGORIES: Record<Category, { label: string; emoji: string }> = {
   furniture: { label: 'Furniture', emoji: '🛋️' },
   household: { label: 'Kitchen & household', emoji: '🍳' },
   electronics: { label: 'Electronics', emoji: '📱' },
-  books: { label: 'Books & media', emoji: '📚' },
-  toys: { label: 'Toys & games', emoji: '🧸' },
+  'books-toys': { label: 'Books, toys & games', emoji: '📚' },
   sports: { label: 'Sports & outdoors', emoji: '⚽' },
   instruments: { label: 'Musical instruments', emoji: '🎸' },
   food: { label: 'Food', emoji: '🥫' },

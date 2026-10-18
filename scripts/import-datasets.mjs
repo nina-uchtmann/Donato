@@ -29,7 +29,7 @@ const WA = { south: 45.54, north: 49.01, west: -124.85, east: -116.91 };
 
 // --- Category rules ---------------------------------------------------------
 
-const ALL_GOODS = ['clothing', 'household', 'books', 'toys'];
+const ALL_GOODS = ['clothing', 'household', 'books-toys'];
 
 /**
  * Known donation organizations and what their stores usually take. Matched against
@@ -37,15 +37,15 @@ const ALL_GOODS = ['clothing', 'household', 'books', 'toys'];
  */
 const ORGANIZATIONS = [
   { match: /habitat for humanity|\brestore\b/i, accepts: ['furniture', 'household'] },
-  { match: /goodwill/i, accepts: ['clothing', 'household', 'electronics', 'books', 'toys', 'sports'] },
-  { match: /salvation army/i, accepts: ['clothing', 'furniture', 'household', 'books', 'toys'] },
-  { match: /(st\.?|saint) vincent de paul/i, accepts: ['clothing', 'furniture', 'household', 'books', 'toys'] },
-  { match: /deseret/i, accepts: ['clothing', 'furniture', 'household', 'electronics', 'books', 'toys'] },
-  { match: /value village|savers/i, accepts: ['clothing', 'household', 'books', 'toys', 'sports'] },
-  { match: /northwest center|big blue truck/i, accepts: ['clothing', 'household', 'books', 'toys'] },
-  { match: /big brothers big sisters/i, accepts: ['clothing', 'household', 'books', 'toys'] },
-  { match: /treehouse/i, accepts: ['clothing', 'books', 'toys'] },
-  { match: /friends of the .*library|library book ?(sale|store|shop)/i, accepts: ['books'] },
+  { match: /goodwill/i, accepts: ['clothing', 'household', 'electronics', 'books-toys', 'sports'] },
+  { match: /salvation army/i, accepts: ['clothing', 'furniture', 'household', 'books-toys'] },
+  { match: /(st\.?|saint) vincent de paul/i, accepts: ['clothing', 'furniture', 'household', 'books-toys'] },
+  { match: /deseret/i, accepts: ['clothing', 'furniture', 'household', 'electronics', 'books-toys'] },
+  { match: /value village|savers/i, accepts: ['clothing', 'household', 'books-toys', 'sports'] },
+  { match: /northwest center|big blue truck/i, accepts: ['clothing', 'household', 'books-toys'] },
+  { match: /big brothers big sisters/i, accepts: ['clothing', 'household', 'books-toys'] },
+  { match: /treehouse/i, accepts: ['clothing', 'books-toys'] },
+  { match: /friends of the .*library|library book ?(sale|store|shop)/i, accepts: ['books-toys'] },
 ];
 
 function organizationAccepts(...names) {
@@ -57,7 +57,7 @@ function organizationAccepts(...names) {
 /** King County material names mapped to Donato categories. */
 const KC_MATERIALS = {
   'Clothing, Shoes, and Fabrics': 'clothing',
-  Books: 'books',
+  Books: 'books-toys',
   'Household Furniture': 'furniture',
   'Office Furniture': 'furniture',
   'Edible food for donation': 'food', // "Food" alone means food scraps for compost
