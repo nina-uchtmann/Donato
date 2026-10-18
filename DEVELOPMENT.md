@@ -230,7 +230,8 @@ Donato/
 │       └── categories.ts      # Categories and colors
 ├── scripts/
 │   ├── test-vision.mjs        # Checks your Vision API key from the terminal
-│   └── import-datasets.mjs    # Builds imported.json from public datasets
+│   ├── import-datasets.mjs    # Builds imported.json from public datasets
+│   └── geocode-cache.json     # Saved address lookups so imports don't repeat them
 ├── assets/                    # Icons and splash screen
 ├── .env.example               # Template for API keys. Keep values blank.
 ├── app.json                   # Expo config (name, permissions, plugins)
@@ -279,9 +280,10 @@ Donato combines two files:
 
 **Refresh the imported data** (takes 1–5 minutes):
 ```bash
-npm run import:data
+npm run import:data                  # full refresh
+npm run import:data -- --no-geocode  # skip address lookups (faster)
 ```
-Then review the summary it prints and commit `src/data/imported.json`. No API keys are needed.
+Then review the summary it prints and commit `src/data/imported.json` **and** `scripts/geocode-cache.json`. No API keys are needed.
 
 **Sources**, in priority order when two describe the same place:
 
@@ -296,11 +298,12 @@ Then review the summary it prints and commit `src/data/imported.json`. No API ke
 - **Duplicates:** places within 250 m with similar names count as the same place. The higher-priority source keeps its entry, and gaps (phone, website, hours) are filled from the other one. Places within 40 m that share a category are also treated as duplicates.
 - **Categories for charity shops:** they come from `ORGANIZATIONS` in the script. For example, Habitat ReStore → furniture and household. Unknown charity shops get clothing, household, books, and toys. Add an organization there to give it accurate categories.
 - **Failures:** if a server is down (OpenStreetMap often is), the script keeps that source's entries from the last import, prints a ⚠ warning, and exits with an error code. Run it again later.
+- **Missing addresses:** many OpenStreetMap places have coordinates but no street address. The script looks these up with OpenStreetMap's [Nominatim](https://nominatim.org) reverse geocoder, at most 1 request per second as its [usage policy](https://operations.osmfoundation.org/policies/nominatim/) requires. Results are saved in `scripts/geocode-cache.json`, so only new places are looked up on later runs. Commit the cache, and don't delete it. Addresses without a house number show as "Near Main St, City, WA". For clothing bins, that's the nearest street.
 - **Stable output:** IDs come from the source (`osm-n123`, `kc-371`, `sea-ballard-food-bank`) and the file is sorted by ID with one place per line, so git diffs show only real changes.
 
 **Licensing:** OpenStreetMap data is © OpenStreetMap contributors under the [ODbL](https://www.openstreetmap.org/copyright). The results screen shows this attribution in its footer. Keep it there.
 
-**Known gaps:** about 40% of imported places have no street address (directions still work from the coordinates), hours are free text, and coverage outside the Puget Sound depends on what OpenStreetMap volunteers have mapped. Add important places to `centers.json` by hand.
+**Known gaps:** looked-up addresses are approximate ("Near …"), hours are free text, and coverage outside the Puget Sound depends on what OpenStreetMap volunteers have mapped. Add important places to `centers.json` by hand.
 
 ### Improve item detection
 If Vision returns a label that doesn't match any category, check the `[vision] detected:` log and add the word to the right list in `KEYWORDS` in `src/lib/classify.ts`. Use the label as Vision writes it, such as `"audio equipment"`. Multi-word phrases beat single words, so a specific phrase can fix a wrong match without removing a word.

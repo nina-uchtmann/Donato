@@ -64,6 +64,8 @@ export default function ResultsScreen() {
   const [query, setQuery] = useState('');
   const [searching, setSearching] = useState(false);
   const [searchError, setSearchError] = useState<string | null>(null);
+  /** The result card showing hours and notes; only one is open at a time. */
+  const [expandedId, setExpandedId] = useState<string | null>(null);
   const mapRef = useRef<MapView>(null);
 
   useEffect(() => {
@@ -218,10 +220,6 @@ export default function ResultsScreen() {
           minimumTrackTintColor={colors.primary}
           maximumTrackTintColor={colors.border}
         />
-        <View style={styles.sliderLabels}>
-          <Text style={styles.muted}>1 mi</Text>
-          <Text style={styles.muted}>25 mi</Text>
-        </View>
       </View>
 
       <FlatList
@@ -230,81 +228,93 @@ export default function ResultsScreen() {
         contentContainerStyle={styles.list}
         ListHeaderComponent={
           <View style={styles.header}>
-            {category && (
-              <Text style={styles.headerTitle}>
-                {CATEGORIES[category].emoji} Places that take {CATEGORIES[category].label.toLowerCase()}
-              </Text>
-            )}
-            {isFallback && !movedTo && (
-              <Text style={styles.notice}>
-                Location unavailable, so distances are from the University of Washington. Search
-                above or long-press the map to choose a spot.
-              </Text>
-            )}
-            {!movedTo && !isFallback && (
-              <Text style={styles.muted}>
-                {Platform.OS === 'ios'
-                  ? 'Tip: search above, drag the red pin, or long-press the map to look somewhere else.'
-                  : 'Tip: search above to look somewhere else.'}
-              </Text>
-            )}
-            <Text style={styles.notice}>
-              Hours and rules change. Tap Donation info or call ahead before you go.
+            <Text style={styles.headerTitle}>
+              {category ? `${CATEGORIES[category].emoji} ` : ''}
+              {results.length} {results.length === 1 ? 'place' : 'places'} within {maxDistance} mi
             </Text>
+            {isFallback && !movedTo && (
+              <Text style={styles.notice}>Using UW as your location. Search above to change it.</Text>
+            )}
           </View>
         }
-        ListEmptyComponent={<Text style={styles.muted}>No nearby locations for this category yet.</Text>}
+        ListEmptyComponent={
+          <Text style={styles.muted}>Nothing nearby yet. Try a larger distance or another spot.</Text>
+        }
         ListFooterComponent={
           <Text style={styles.attribution}>
-            Includes data from © OpenStreetMap contributors (ODbL), City of Seattle, and King County.
+            Hours and rules change, so check before you go.{'\n'}Data: © OpenStreetMap contributors
+            (ODbL), City of Seattle, King County.
           </Text>
         }
-        renderItem={({ item }) => (
-          <View style={styles.card}>
-            <View style={styles.cardTop}>
-              <Text style={styles.cardName}>{item.name}</Text>
-              <Text style={styles.distance}>{item.distance.toFixed(1)} mi</Text>
-            </View>
-            <Text style={styles.muted}>{item.address ?? 'Address not listed. Use Directions.'}</Text>
-            <Text style={styles.accepts}>
-              Accepts: {item.accepts.map((a) => CATEGORIES[a].emoji + ' ' + CATEGORIES[a].label).join(' · ')}
-            </Text>
-            {item.hours && <Text style={styles.accepts}>Hours: {item.hours}</Text>}
-            {item.note && <Text style={styles.note}>{item.note}</Text>}
-            {item.source && (
-              <Text style={styles.source}>
-                Source: {SOURCE_LABELS[item.source]}
-                {item.updated ? `, updated ${item.updated}` : ''}
-              </Text>
-            )}
-            <View style={styles.actions}>
-              <Pressable
-                style={({ pressed }) => [styles.directions, pressed && { opacity: 0.8 }]}
-                onPress={() => openDirections(item)}
-              >
-                <Text style={styles.directionsText}>Directions</Text>
-              </Pressable>
-              {item.website && (
-                <Pressable
-                  style={({ pressed }) => [styles.directions, pressed && { opacity: 0.8 }]}
-                  onPress={() => item.website && Linking.openURL(item.website)}
+        renderItem={({ item }) => {
+          const expanded = expandedId === item.id;
+          const hasDetails = Boolean(item.hours || item.note || item.source);
+          return (
+            <Pressable
+              style={styles.card}
+              onPress={() => hasDetails && setExpandedId(expanded ? null : item.id)}
+              accessibilityHint={hasDetails ? 'Shows hours and donation notes' : undefined}
+            >
+              <View style={styles.cardTop}>
+                <Text style={styles.cardName} numberOfLines={2}>
+                  {item.name}
+                </Text>
+                <Text style={styles.distance}>{item.distance.toFixed(1)} mi</Text>
+              </View>
+              <View style={styles.cardMeta}>
+                <Text style={[styles.muted, styles.flex]} numberOfLines={1}>
+                  {item.address ?? 'No address listed'}
+                </Text>
+                <Text
+                  style={styles.acceptIcons}
+                  accessibilityLabel={`Accepts ${item.accepts.map((a) => CATEGORIES[a].label).join(', ')}`}
                 >
-                  <Text style={styles.directionsText}>Donation info</Text>
-                </Pressable>
+                  {item.accepts.map((a) => CATEGORIES[a].emoji).join(' ')}
+                </Text>
+              </View>
+
+              {expanded && (
+                <View style={styles.details}>
+                  {item.hours && <Text style={styles.detailText}>🕒 {item.hours}</Text>}
+                  {item.note && <Text style={styles.detailText}>{item.note}</Text>}
+                  <Text style={styles.source}>
+                    Accepts {item.accepts.map((a) => CATEGORIES[a].label.toLowerCase()).join(', ')}
+                    {item.source ? ` · ${SOURCE_LABELS[item.source]}` : ''}
+                    {item.updated ? ` (${item.updated})` : ''}
+                  </Text>
+                </View>
               )}
-              {item.phone && (
-                <Pressable
-                  style={({ pressed }) => [styles.directions, pressed && { opacity: 0.8 }]}
-                  onPress={() => item.phone && Linking.openURL(`tel:${item.phone.replace(/[^\d+]/g, '')}`)}
-                >
-                  <Text style={styles.directionsText}>Call</Text>
-                </Pressable>
-              )}
-            </View>
-          </View>
-        )}
+
+              <View style={styles.actions}>
+                <ActionButton label="Directions" onPress={() => openDirections(item)} />
+                {item.website && <ActionButton label="Info" onPress={() => Linking.openURL(item.website!)} />}
+                {item.phone && (
+                  <ActionButton
+                    label="Call"
+                    onPress={() => Linking.openURL(`tel:${item.phone!.replace(/[^\d+]/g, '')}`)}
+                  />
+                )}
+                {hasDetails && (
+                  <Text style={styles.moreText}>{expanded ? 'Less ▴' : 'More ▾'}</Text>
+                )}
+              </View>
+            </Pressable>
+          );
+        }}
       />
     </View>
+  );
+}
+
+function ActionButton({ label, onPress }: { label: string; onPress: () => void }) {
+  return (
+    <Pressable
+      style={({ pressed }) => [styles.directions, pressed && { opacity: 0.8 }]}
+      onPress={onPress}
+      hitSlop={4}
+    >
+      <Text style={styles.directionsText}>{label}</Text>
+    </Pressable>
   );
 }
 
@@ -333,7 +343,7 @@ const styles = StyleSheet.create({
     lineHeight: 20,
     textAlign: 'center',
   },
-  list: { padding: 16, gap: 12 },
+  list: { padding: 16, gap: 10 },
   header: { gap: 8, marginBottom: 4 },
   headerTitle: { fontSize: 18, fontWeight: '700', color: colors.text },
   searchBar: {
@@ -391,7 +401,6 @@ const styles = StyleSheet.create({
   },
   sliderTitle: { fontSize: 15, fontWeight: '700', color: colors.text },
   slider: { width: '100%', height: 40 },
-  sliderLabels: { flexDirection: 'row', justifyContent: 'space-between' },
   notice: {
     backgroundColor: colors.warningBg,
     color: colors.warning,
@@ -403,7 +412,7 @@ const styles = StyleSheet.create({
   card: {
     backgroundColor: colors.card,
     borderRadius: 14,
-    padding: 16,
+    padding: 14,
     gap: 6,
     borderWidth: 1,
     borderColor: colors.border,
@@ -411,11 +420,20 @@ const styles = StyleSheet.create({
   cardTop: { flexDirection: 'row', justifyContent: 'space-between', gap: 8 },
   cardName: { fontSize: 16, fontWeight: '700', color: colors.text, flex: 1 },
   distance: { fontSize: 15, fontWeight: '700', color: colors.primary },
-  accepts: { fontSize: 13, color: colors.text },
-  note: { fontSize: 13, color: colors.muted, fontStyle: 'italic' },
-  source: { fontSize: 11, color: colors.muted },
+  cardMeta: { flexDirection: 'row', alignItems: 'center', gap: 8 },
+  acceptIcons: { fontSize: 14 },
+  details: {
+    gap: 4,
+    paddingTop: 8,
+    marginTop: 2,
+    borderTopWidth: 1,
+    borderColor: colors.border,
+  },
+  detailText: { fontSize: 13, color: colors.text, lineHeight: 18 },
+  source: { fontSize: 12, color: colors.muted },
+  moreText: { marginLeft: 'auto', color: colors.muted, fontSize: 13, fontWeight: '600' },
   attribution: { fontSize: 11, color: colors.muted, textAlign: 'center', marginTop: 8 },
-  actions: { flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginTop: 6 },
+  actions: { flexDirection: 'row', flexWrap: 'wrap', alignItems: 'center', gap: 8, marginTop: 4 },
   directions: {
     backgroundColor: colors.primaryLight,
     paddingVertical: 8,
