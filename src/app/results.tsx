@@ -10,7 +10,7 @@ import {
   Text,
   View,
 } from 'react-native';
-import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
+import MapView, { Marker } from 'react-native-maps';
 
 import { CATEGORIES, colors, isCategory, type Category } from '@/constants/categories';
 import centersData from '@/data/centers.json';
@@ -63,22 +63,30 @@ export default function ResultsScreen() {
 
   return (
     <View style={styles.flex}>
-      <MapView
-        style={styles.map}
-        provider={Platform.OS === 'android' ? PROVIDER_GOOGLE : undefined}
-        showsUserLocation={!isFallback}
-        initialRegion={{ ...coords, latitudeDelta: 0.12, longitudeDelta: 0.12 }}
-      >
-        {results.map((c) => (
-          <Marker
-            key={c.id}
-            coordinate={{ latitude: c.latitude, longitude: c.longitude }}
-            title={c.name}
-            description={c.address}
-            pinColor={colors.primary}
-          />
-        ))}
-      </MapView>
+      {Platform.OS === 'ios' ? (
+        <MapView
+          style={styles.map}
+          showsUserLocation={!isFallback}
+          initialRegion={{ ...coords, latitudeDelta: 0.12, longitudeDelta: 0.12 }}
+        >
+          {results.map((c) => (
+            <Marker
+              key={c.id}
+              coordinate={{ latitude: c.latitude, longitude: c.longitude }}
+              title={c.name}
+              description={c.address}
+              pinColor={colors.primary}
+            />
+          ))}
+        </MapView>
+      ) : (
+        <View style={styles.mapUnavailable}>
+          <Text style={styles.mapUnavailableText}>
+            Map preview is unavailable on Android in Expo Go. Browse nearby places below and tap
+            Directions to open Google Maps.
+          </Text>
+        </View>
+      )}
 
       <FlatList
         data={results}
@@ -158,6 +166,19 @@ const styles = StyleSheet.create({
   flex: { flex: 1 },
   centered: { flex: 1, alignItems: 'center', justifyContent: 'center', gap: 12 },
   map: { width: '100%', height: 240 },
+  mapUnavailable: {
+    height: 240,
+    paddingHorizontal: 24,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: colors.primaryLight,
+  },
+  mapUnavailableText: {
+    color: colors.muted,
+    fontSize: 14,
+    lineHeight: 20,
+    textAlign: 'center',
+  },
   list: { padding: 16, gap: 12 },
   header: { gap: 8, marginBottom: 4 },
   headerTitle: { fontSize: 18, fontWeight: '700', color: colors.text },
