@@ -265,7 +265,7 @@ Add an entry to `src/data/centers.json`:
   "website": "https://example.org/donate"
 }
 ```
-`accepts` can include any category key from `src/constants/categories.ts`: `"clothing"`, `"furniture"`, `"household"`, `"electronics"`, `"books"`, `"toys"`, `"sports"`, `"instruments"`, and `"food"`. To get coordinates, right-click the location in Google Maps. `note` and `website` are optional. They show on the result card, and `website` adds a **Donation info** button. Only list a category when the organization's own donation page says they take it.
+`accepts` can include any category key from `src/constants/categories.ts`: `"clothing"`, `"furniture"`, `"household"`, `"electronics"`, `"books-toys"`, `"sports"`, `"instruments"`, and `"food"`. Books and toys share one category because nearly every place that takes one also takes the other. To get coordinates, right-click the location in Google Maps. `note` and `website` are optional. They show on the result card, and `website` adds a **Donation info** button. Only list a category when the organization's own donation page says they take it.
 
 Hand-checked entries always win over imported ones. The next `npm run import:data` drops any imported duplicate of a place you add here.
 
@@ -307,6 +307,9 @@ Then review the summary it prints and commit `src/data/imported.json` **and** `s
 
 ### Improve item detection
 If Vision returns a label that doesn't match any category, check the `[vision] detected:` log and add the word to the right list in `KEYWORDS` in `src/lib/classify.ts`. Use the label as Vision writes it, such as `"audio equipment"`. Multi-word phrases beat single words, so a specific phrase can fix a wrong match without removing a word.
+
+### Categories with few drop-off spots
+Musical instruments have only a few confirmed places, all in Seattle. When fewer than 3 are within range, the results screen adds a **"Might take…"** section of nearby general thrift stores (places that take both clothing and household goods), with a reminder to call first. These are never counted as confirmed, since no major chain's donation page lists instruments. To change this, edit `MAY_ACCEPT` in `src/app/results.tsx`. To add confirmed places, add them to `centers.json` with `"instruments"` in `accepts`.
 
 ### Add a new category
 1. Add it to the `Category` type and `CATEGORIES` in `src/constants/categories.ts`.

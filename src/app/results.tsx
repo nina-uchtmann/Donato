@@ -52,6 +52,18 @@ const SOURCE_LABELS: Record<NonNullable<Center['source']>, string> = {
 /** Keeps the map responsive in dense areas; the list still shows everything. */
 const MAX_MARKERS = 150;
 
+/**
+ * Categories with very few confirmed drop-off spots. When there are fewer than
+ * MIN_CONFIRMED nearby, general thrift stores are listed separately as places
+ * that might take the item, with a reminder to call first. They are never
+ * counted as confirmed, because no major chain's donation page lists these items.
+ */
+const MAY_ACCEPT: Partial<Record<Category, (c: Center) => boolean>> = {
+  instruments: (c) => c.accepts.includes('household') && c.accepts.includes('clothing'),
+};
+const MIN_CONFIRMED = 3;
+const MAX_MAYBE = 10;
+
 export default function ResultsScreen() {
   const params = useLocalSearchParams<{ category: string }>();
   const category = isCategory(params.category) ? params.category : null;
@@ -116,14 +128,27 @@ export default function ResultsScreen() {
   }
 
   const results = useMemo(() => {
-  if (!coords) return [];
+    if (!coords) return [];
 
-  return centers
-    .filter((c) => !category || c.accepts.includes(category))
-    .map((c) => ({ ...c, distance: distanceMiles(coords, c) }))
-    .filter((c) => c.distance <= maxDistance)
-    .sort((a, b) => a.distance - b.distance);
-}, [coords, category, maxDistance]);
+    return centers
+      .filter((c) => !category || c.accepts.includes(category))
+      .map((c) => ({ ...c, distance: distanceMiles(coords, c) }))
+      .filter((c) => c.distance <= maxDistance)
+      .sort((a, b) => a.distance - b.distance);
+  }, [coords, category, maxDistance]);
+
+  /** General thrift stores that might take the item; see MAY_ACCEPT. */
+  const maybe = useMemo(() => {
+    const mightAccept = category && MAY_ACCEPT[category];
+    if (!coords || !mightAccept || results.length >= MIN_CONFIRMED) return [];
+
+    return centers
+      .filter((c) => mightAccept(c) && !c.accepts.includes(category))
+      .map((c) => ({ ...c, distance: distanceMiles(coords, c), maybe: true }))
+      .filter((c) => c.distance <= maxDistance)
+      .sort((a, b) => a.distance - b.distance)
+      .slice(0, MAX_MAYBE);
+  }, [coords, category, maxDistance, results.length]);
 
   if (!coords) {
     return (
@@ -164,13 +189,13 @@ export default function ResultsScreen() {
           initialRegion={{ ...coords, latitudeDelta: 0.12, longitudeDelta: 0.12 }}
           onLongPress={(e) => moveTo(e.nativeEvent.coordinate)}
         >
-          {results.slice(0, MAX_MARKERS).map((c) => (
+          {[...results, ...maybe].slice(0, MAX_MARKERS).map((c) => (
             <Marker
               key={c.id}
               coordinate={{ latitude: c.latitude, longitude: c.longitude }}
               title={c.name}
-              description={c.address}
-              pinColor={colors.primary}
+              description={'maybe' in c ? 'Might accept. Call first.' : c.address}
+              pinColor={'maybe' in c ? colors.muted : colors.primary}
             />
           ))}
           <Marker
@@ -223,7 +248,7 @@ export default function ResultsScreen() {
       </View>
 
       <FlatList
-        data={results}
+        data={[...results, ...maybe]}
         keyExtractor={(c) => c.id}
         contentContainerStyle={styles.list}
         ListHeaderComponent={
@@ -246,10 +271,10 @@ export default function ResultsScreen() {
             (ODbL), City of Seattle, King County.
           </Text>
         }
-        renderItem={({ item }) => {
+        renderItem={({ item, index }) => {
           const expanded = expandedId === item.id;
           const hasDetails = Boolean(item.hours || item.note || item.source);
-          return (
+          const card = (
             <Pressable
               style={styles.card}
               onPress={() => hasDetails && setExpandedId(expanded ? null : item.id)}
@@ -299,6 +324,17 @@ export default function ResultsScreen() {
                 )}
               </View>
             </Pressable>
+          );
+          // The first "maybe" place gets a heading so it's clear these aren't confirmed.
+          if (!('maybe' in item) || index !== results.length) return card;
+          return (
+            <View style={styles.maybeSection}>
+              <Text style={styles.maybeTitle}>Might take {category && CATEGORIES[category].label.toLowerCase()}</Text>
+              <Text style={styles.muted}>
+                General thrift stores nearby. They don't list this item, so call before you go.
+              </Text>
+              {card}
+            </View>
           );
         }}
       />
@@ -431,6 +467,8 @@ const styles = StyleSheet.create({
   },
   detailText: { fontSize: 13, color: colors.text, lineHeight: 18 },
   source: { fontSize: 12, color: colors.muted },
+  maybeSection: { gap: 6, marginTop: 8 },
+  maybeTitle: { fontSize: 16, fontWeight: '700', color: colors.text },
   moreText: { marginLeft: 'auto', color: colors.muted, fontSize: 13, fontWeight: '600' },
   attribution: { fontSize: 11, color: colors.muted, textAlign: 'center', marginTop: 8 },
   actions: { flexDirection: 'row', flexWrap: 'wrap', alignItems: 'center', gap: 8, marginTop: 4 },
