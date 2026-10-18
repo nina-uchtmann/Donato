@@ -49,15 +49,16 @@ const KEYWORDS: Record<Category, string[]> = {
     'networking hardware', 'remote control', 'hard disk drive', 'portable media player', 'radio',
     'amplifier', 'smartwatch',
   ],
-  // Books and toys share one category: nearly every place that takes one takes the other.
-  'books-toys': [
+  books: [
     'book', 'publication', 'novel', 'textbook', 'comic book', 'comics', 'magazine', 'paperback',
     'book cover', 'literature', 'dvd', 'compact disc', 'optical disc', 'phonograph record',
-    'gramophone record', 'video game',
+    'gramophone record',
+  ],
+  'toys-games': [
     'toy', 'toy block', 'lego', 'stuffed toy', 'plush', 'teddy bear', 'doll', 'action figure',
-    'figurine', 'puzzle', 'jigsaw puzzle', 'board game', 'tabletop game', 'game', 'playset',
+    'figurine', 'puzzle', 'jigsaw puzzle', 'board game', 'tabletop game', 'video game', 'playset',
     'toy vehicle', 'model car', 'rattle', 'baby toys', 'educational toy', 'kite', 'yo-yo',
-    'playing card', 'card game', 'dice',
+    'playing card', 'card game', 'dice', 'game',
   ],
   sports: [
     'sports', 'team sport', 'individual sport', 'racquet sport', 'ball game', 'sports equipment',
