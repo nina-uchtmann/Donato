@@ -6,6 +6,19 @@ Donato is a mobile app for **iOS and Android**, built at **DubHacks '26**, that 
 
 > 👩‍💻 **Want to run or work on the code?** See [DEVELOPMENT.md](DEVELOPMENT.md).
 
+## Video Demo
+[![Watch the video](https://vimeo.com/1236971753?fl=ip&fe=ec)](https://vimeo.com/1236971753?fl=ip&fe=ec)
+
+## App Preview
+<img width="585" height="1266" alt="IMG_0666" src="https://github.com/user-attachments/assets/84586d9a-4840-4f65-83c2-6c4c1e5bf698" />
+
+<img width="585" height="1266" alt="IMG_0667" src="https://github.com/user-attachments/assets/1fb1d0e1-de85-497c-b608-ee707dac7f26" />
+
+<img width="585" height="1266" alt="IMG_0668" src="https://github.com/user-attachments/assets/70daefee-3908-44f5-9d7a-a256adb3ebfb" />
+
+<img width="1111" height="508" alt="IMG_0669" src="https://github.com/user-attachments/assets/3a721c2d-0ae6-4017-b57a-5809c932148d" />
+
+
 ---
 
 ## The Problem
